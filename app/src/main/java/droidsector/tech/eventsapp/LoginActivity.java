@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
@@ -32,7 +34,7 @@ public class LoginActivity extends AppCompatActivity {
                 user = firebaseAuth.getCurrentUser();
                 if (user != null)
                 {
-                    onSignedInInitialize(user.getDisplayName(), user.getEmail());
+                    onSignedInInitialize(user.getPhoneNumber());
                 }
                 else
                 {
@@ -52,6 +54,30 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id)
+        {
+            case R.id.logout:
+                AuthUI.getInstance().signOut(this);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void onSignedInInitialize(String phoneNumber) {
+    }
+
+    private void onSignedOutCleanup() {
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
         if (mAuthStateListener != null) {
@@ -63,12 +89,6 @@ public class LoginActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         mFirebaseAuth.addAuthStateListener(mAuthStateListener);
-    }
-
-    private void onSignedInInitialize(String name, String email) {
-    }
-
-    private void onSignedOutCleanup() {
     }
 
     @Override
