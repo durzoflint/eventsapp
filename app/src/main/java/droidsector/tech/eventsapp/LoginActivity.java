@@ -1,6 +1,8 @@
 package droidsector.tech.eventsapp;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,6 +14,11 @@ import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Arrays;
 
 public class LoginActivity extends AppCompatActivity {
@@ -97,11 +104,63 @@ public class LoginActivity extends AppCompatActivity {
         if (requestCode == RC_SIGN_IN)
         {
             if (resultCode == RESULT_OK)
+            {
                 Toast.makeText(this, "Signed In!", Toast.LENGTH_SHORT).show();
+                new CheckLogin().execute(user.getPhoneNumber());
+            }
             else if (resultCode == RESULT_CANCELED) {
                 Toast.makeText(this, "Sign In Cancelled", Toast.LENGTH_SHORT).show();
                 finish();
             }
+        }
+    }
+
+    private class CheckLogin extends AsyncTask<String,Void,Void> {
+        String webPage = "", number = "";
+        String baseUrl = "https://whhc.in/aaa/eventsbuddy/";
+        ProgressDialog progressDialog;
+        @Override
+        protected void onPreExecute(){
+            progressDialog = ProgressDialog.show(LoginActivity.this, "Please Wait!","Validating!");
+            super.onPreExecute();
+        }
+        @Override
+        protected Void doInBackground(String... strings){
+            number = strings[0];
+            URL url;
+            HttpURLConnection urlConnection = null;
+            try
+            {
+                url = new URL(baseUrl+"firsttimelogin.php?number="+number);
+                urlConnection = (HttpURLConnection) url.openConnection();
+                BufferedReader br=new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                String data;
+                while ((data=br.readLine()) != null)
+                    webPage=webPage+data;
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+            finally
+            {
+                if (urlConnection != null)
+                    urlConnection.disconnect();
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            progressDialog.dismiss();
+            if(webPage.equals("y"))
+            {
+                Intent i = new Intent(LoginActivity.this, RegisterUserActivity.class);
+                i.putExtra("number", number);
+                startActivity(i);
+            }
+            else
+                Toast.makeText(LoginActivity.this, "Take me to the dashboard.", Toast.LENGTH_LONG).show();
         }
     }
 
