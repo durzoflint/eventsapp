@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -27,6 +28,7 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     public static FirebaseUser user;
+    String userid = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +64,7 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.activity_login_menu, menu);
         return true;
     }
 
@@ -79,6 +81,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void onSignedInInitialize(String phoneNumber) {
+        new CheckLogin().execute(phoneNumber);
     }
 
     private void onSignedOutCleanup() {
@@ -106,7 +109,6 @@ public class LoginActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK)
             {
                 Toast.makeText(this, "Signed In!", Toast.LENGTH_SHORT).show();
-                new CheckLogin().execute(user.getPhoneNumber());
             }
             else if (resultCode == RESULT_CANCELED) {
                 Toast.makeText(this, "Sign In Cancelled", Toast.LENGTH_SHORT).show();
@@ -131,7 +133,10 @@ public class LoginActivity extends AppCompatActivity {
             HttpURLConnection urlConnection = null;
             try
             {
-                url = new URL(baseUrl+"firsttimelogin.php?number="+number);
+                String myURL = baseUrl+"firsttimelogin.php?number="+number;
+                myURL = myURL.replaceAll(" ","%20");
+                myURL = myURL.replaceAll("\\+","%2B");
+                url = new URL(myURL);
                 urlConnection = (HttpURLConnection) url.openConnection();
                 BufferedReader br=new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
                 String data;
@@ -160,7 +165,64 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(i);
             }
             else
-                Toast.makeText(LoginActivity.this, "Take me to the dashboard.", Toast.LENGTH_LONG).show();
+            {
+                new FetchUserId().execute(user.getPhoneNumber());
+            }
+        }
+    }
+
+    private class FetchUserId extends AsyncTask<String,Void,Void> {
+        String webPage = "", number = "";
+        String baseUrl = "https://whhc.in/aaa/eventsbuddy/";
+        ProgressDialog progressDialog;
+        @Override
+        protected void onPreExecute(){
+            progressDialog = ProgressDialog.show(LoginActivity.this, "Please Wait!","Validating!");
+            super.onPreExecute();
+        }
+        @Override
+        protected Void doInBackground(String... strings){
+            number = strings[0];
+            URL url;
+            HttpURLConnection urlConnection = null;
+            try
+            {
+                String myURL = baseUrl+"fetchuserid.php?number="+number;
+                myURL = myURL.replaceAll(" ","%20");
+                myURL = myURL.replaceAll("\\+","%2B");
+                url = new URL(myURL);
+                urlConnection = (HttpURLConnection) url.openConnection();
+                BufferedReader br=new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                String data;
+                while ((data=br.readLine()) != null)
+                    webPage=webPage+data;
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+            finally
+            {
+                if (urlConnection != null)
+                    urlConnection.disconnect();
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            progressDialog.dismiss();
+            if (!webPage.isEmpty())
+            {
+                Intent i = new Intent(LoginActivity.this, DashboardActivity.class);
+                i.putExtra("userid", userid);
+                startActivity(i);
+            }
+            else
+            {
+                Toast.makeText(LoginActivity.this, "Invalid Login", Toast.LENGTH_SHORT).show();
+                finish();
+            }
         }
     }
 

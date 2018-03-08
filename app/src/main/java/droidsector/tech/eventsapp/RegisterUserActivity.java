@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -55,7 +56,10 @@ public class RegisterUserActivity extends AppCompatActivity {
             HttpURLConnection urlConnection = null;
             try
             {
-                url = new URL(baseUrl+"registeruser.php?name="+name+"&number="+number);
+                String myURL = baseUrl+"registeruser.php?name="+name+"&number="+number;
+                myURL = myURL.replaceAll(" ","%20");
+                myURL = myURL.replaceAll("\\+","%2B");
+                url = new URL(myURL);
                 urlConnection = (HttpURLConnection) url.openConnection();
                 BufferedReader br=new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
                 String data;
