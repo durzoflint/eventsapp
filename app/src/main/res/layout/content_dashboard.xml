@@ -4,8 +4,63 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="droidsector.tech.eventsapp.DashboardActivity"
     tools:showIn="@layout/app_bar_dashboard">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp">
+
+            <TextView
+                android:id="@+id/admintv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:gravity="center_horizontal"
+                android:text="Your Events"
+                android:textColor="@android:color/white"
+                android:textSize="24sp"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:id="@+id/adminevents"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="24dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/teamtv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:gravity="center_horizontal"
+                android:text="Events with you"
+                android:textColor="@android:color/white"
+                android:textSize="24sp"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:id="@+id/teamevents"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="24dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
 
 </android.support.constraint.ConstraintLayout>

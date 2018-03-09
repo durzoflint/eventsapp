@@ -1,7 +1,12 @@
 package droidsector.tech.eventsapp;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -11,30 +16,53 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class DashboardActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     String userid;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         Intent intent = getIntent();
         userid = intent.getStringExtra("userid");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        CoordinatorLayout coordinatorLayout = findViewById(R.id.include);
+        LinearLayout adminEvents = coordinatorLayout.findViewById(R.id.adminevents);
+        adminEvents.removeAllViews();
+        LinearLayout teamEvents = coordinatorLayout.findViewById(R.id.teamevents);
+        teamEvents.removeAllViews();
+        new FetchEvent().execute();
     }
 
     @Override
@@ -91,5 +119,100 @@ public class DashboardActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private class FetchEvent extends AsyncTask<Void,Void,Void> {
+        String webPage = "";
+        String baseUrl = "https://whhc.in/aaa/eventsbuddy/";
+        @Override
+        protected Void doInBackground(Void... voids){
+            URL url;
+            HttpURLConnection urlConnection = null;
+            try
+            {
+                String myURL = baseUrl+"fetchevents.php?userid="+userid;
+                myURL = myURL.replaceAll(" ","%20");
+                myURL = myURL.replaceAll("\\+","%2B");
+                myURL = myURL.replaceAll("\'", "%27");
+                myURL = myURL.replaceAll("\'", "%22");
+                myURL = myURL.replaceAll("\\(", "%28");
+                myURL = myURL.replaceAll("\\)", "%29");
+                myURL = myURL.replaceAll("\\{", "%7B");
+                myURL = myURL.replaceAll("\\}", "%7B");
+                myURL = myURL.replaceAll("\\]", "%22");
+                myURL = myURL.replaceAll("\\[", "%22");
+                url = new URL(myURL);
+                urlConnection = (HttpURLConnection) url.openConnection();
+                BufferedReader br=new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                String data;
+                while ((data=br.readLine()) != null)
+                    webPage=webPage+data;
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+            finally
+            {
+                if (urlConnection != null)
+                    urlConnection.disconnect();
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            if(!webPage.isEmpty())
+            {
+                CoordinatorLayout coordinatorLayout = findViewById(R.id.include);
+                LinearLayout adminEvents = coordinatorLayout.findViewById(R.id.adminevents);
+                LinearLayout teamEvents = coordinatorLayout.findViewById(R.id.teamevents);
+                LinearLayout.LayoutParams matchParams = new LinearLayout.LayoutParams
+                        (LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1.0f);
+                Context context = DashboardActivity.this;
+                while (webPage.contains("<br>"))
+                {
+                    int brI = webPage.indexOf("<br>");
+                    String category = webPage.substring(0, brI);
+                    webPage = webPage.substring(brI+4);
+                    brI = webPage.indexOf("<br>");
+                    String name = webPage.substring(0, brI);
+                    webPage = webPage.substring(brI+4);
+                    brI = webPage.indexOf("<br>");
+                    String location = webPage.substring(0, brI);
+                    webPage = webPage.substring(brI+4);
+                    brI = webPage.indexOf("<br>");
+                    String from = webPage.substring(0, brI);
+                    webPage = webPage.substring(brI+4);
+                    brI = webPage.indexOf("<br>");
+                    String to = webPage.substring(0, brI);
+                    webPage = webPage.substring(brI+4);
+                    brI = webPage.indexOf("<br>");
+                    String teamMemberCount = webPage.substring(0, brI);
+                    webPage = webPage.substring(brI+4);
+                    LinearLayout linearLayout = new LinearLayout(context);
+                    linearLayout.setBackgroundColor(Color.WHITE);
+                    linearLayout.setLayoutParams(matchParams);
+                    TextView nameTV = new TextView(context);
+                    nameTV.setLayoutParams(matchParams);
+                    nameTV.setText(name);
+                    linearLayout.addView(nameTV);
+                    if (category.equals("admin"))
+                    {
+                        TextView adminTV = coordinatorLayout.findViewById(R.id.admintv);
+                        adminTV.setVisibility(View.VISIBLE);
+                        adminEvents.addView(linearLayout);
+                        adminEvents.setVisibility(View.VISIBLE);
+                    }
+                    else
+                    {
+                        TextView teamTV = coordinatorLayout.findViewById(R.id.teamtv);
+                        teamTV.setVisibility(View.VISIBLE);
+                        teamEvents.addView(linearLayout);
+                        teamEvents.setVisibility(View.VISIBLE);
+                    }
+                }
+            }
+        }
     }
 }
