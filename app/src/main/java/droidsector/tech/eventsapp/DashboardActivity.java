@@ -169,48 +169,81 @@ public class DashboardActivity extends AppCompatActivity
                 LinearLayout teamEvents = coordinatorLayout.findViewById(R.id.teamevents);
                 LinearLayout.LayoutParams matchParams = new LinearLayout.LayoutParams
                         (LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1.0f);
-                Context context = DashboardActivity.this;
+                final Context context = DashboardActivity.this;
                 while (webPage.contains("<br>"))
                 {
                     int brI = webPage.indexOf("<br>");
-                    String category = webPage.substring(0, brI);
+                    final String id = webPage.substring(0, brI);
                     webPage = webPage.substring(brI+4);
                     brI = webPage.indexOf("<br>");
-                    String name = webPage.substring(0, brI);
+                    final String category = webPage.substring(0, brI);
                     webPage = webPage.substring(brI+4);
                     brI = webPage.indexOf("<br>");
-                    String location = webPage.substring(0, brI);
+                    final String name = webPage.substring(0, brI);
                     webPage = webPage.substring(brI+4);
                     brI = webPage.indexOf("<br>");
-                    String from = webPage.substring(0, brI);
+                    final String description = webPage.substring(0, brI);
                     webPage = webPage.substring(brI+4);
                     brI = webPage.indexOf("<br>");
-                    String to = webPage.substring(0, brI);
+                    final String location = webPage.substring(0, brI);
                     webPage = webPage.substring(brI+4);
                     brI = webPage.indexOf("<br>");
-                    String teamMemberCount = webPage.substring(0, brI);
+                    final String from = webPage.substring(0, brI);
                     webPage = webPage.substring(brI+4);
+                    brI = webPage.indexOf("<br>");
+                    final String to = webPage.substring(0, brI);
+                    webPage = webPage.substring(brI+4);
+                    brI = webPage.indexOf("<br>");
+                    final String teamMemberCount = webPage.substring(0, brI);
+                    webPage = webPage.substring(brI+4);
+                    LinearLayout outerLinearLayout = new LinearLayout(context);
+                    outerLinearLayout.setLayoutParams(matchParams);
+                    outerLinearLayout.setPadding(0,32,0,32);
                     LinearLayout linearLayout = new LinearLayout(context);
+                    linearLayout.setOrientation(LinearLayout.VERTICAL);
+                    linearLayout.setPadding(32,8,32,8);
                     linearLayout.setBackgroundColor(Color.WHITE);
                     linearLayout.setLayoutParams(matchParams);
                     TextView nameTV = new TextView(context);
+                    nameTV.setTextSize(22);
                     nameTV.setLayoutParams(matchParams);
                     nameTV.setText(name);
                     linearLayout.addView(nameTV);
+                    TextView fromTV = new TextView(context);
+                    fromTV.setLayoutParams(matchParams);
+                    fromTV.setText("Date : "+from.substring(0, from.indexOf(' ')));
+                    linearLayout.addView(fromTV);
+                    outerLinearLayout.addView(linearLayout);
                     if (category.equals("admin"))
                     {
                         TextView adminTV = coordinatorLayout.findViewById(R.id.admintv);
                         adminTV.setVisibility(View.VISIBLE);
-                        adminEvents.addView(linearLayout);
+                        adminEvents.addView(outerLinearLayout);
                         adminEvents.setVisibility(View.VISIBLE);
                     }
                     else
                     {
                         TextView teamTV = coordinatorLayout.findViewById(R.id.teamtv);
                         teamTV.setVisibility(View.VISIBLE);
-                        teamEvents.addView(linearLayout);
+                        teamEvents.addView(outerLinearLayout);
                         teamEvents.setVisibility(View.VISIBLE);
                     }
+                    linearLayout.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Intent intent = new Intent(context, EventDetailsActivity.class);
+                            intent.putExtra("userid",userid);
+                            intent.putExtra("teamid",id);
+                            intent.putExtra("name",name);
+                            intent.putExtra("description",description);
+                            intent.putExtra("location",location);
+                            intent.putExtra("category",category);
+                            intent.putExtra("from",from);
+                            intent.putExtra("to",to);
+                            intent.putExtra("teamMemberCount",teamMemberCount);
+                            startActivity(intent);
+                        }
+                    });
                 }
             }
         }

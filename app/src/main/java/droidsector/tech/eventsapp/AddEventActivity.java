@@ -35,7 +35,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class AddEventActivity extends AppCompatActivity {
-    String userid = "", eventName, location, startDate, endDate;
+    String userid = "", eventName, description, location, startDate, endDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,12 +57,14 @@ public class AddEventActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 EditText eventNameEditText = findViewById(R.id.eventname);
+                EditText descriptionEditText = findViewById(R.id.description);
                 EditText locationEditText = findViewById(R.id.location);
                 TextView fromDateEditText = findViewById(R.id.fromdate);
                 TextView fromTimeEditText = findViewById(R.id.fromtime);
                 TextView toDateEditText = findViewById(R.id.todate);
                 TextView toTimeEditText = findViewById(R.id.totime);
                 eventName = eventNameEditText.getText().toString();
+                description = descriptionEditText.getText().toString();
                 location = locationEditText.getText().toString();
                 startDate = fromDateEditText.getText().toString() + " " + fromTimeEditText.getText().toString();
                 endDate = toDateEditText.getText().toString() + " " + toTimeEditText.getText().toString();
@@ -161,7 +163,7 @@ public class AddEventActivity extends AppCompatActivity {
             try
             {
                 String myURL = baseUrl+"addevent.php?userid="+userid+"&eventname="+eventName
-                        +"&address="+location+"&startdate="+startDate+"&enddate="+endDate;
+                        +"&description="+description+"&address="+location+"&startdate="+startDate+"&enddate="+endDate;
                 myURL = myURL.replaceAll(" ","%20");
                 myURL = myURL.replaceAll("\\+","%2B");
                 myURL = myURL.replaceAll("\'", "%27");

@@ -33,6 +33,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="droidsector.tech.eventsapp.DashboardActivity" />
         </activity>
+        <activity android:name=".EventDetailsActivity"></activity>
     </application>
 
 </manifest>
