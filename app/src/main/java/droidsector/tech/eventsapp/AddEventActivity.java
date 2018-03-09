@@ -1,8 +1,10 @@
 package droidsector.tech.eventsapp;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -19,13 +21,21 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 public class AddEventActivity extends AppCompatActivity {
+    String userid = "", eventName, location, startDate, endDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +50,25 @@ public class AddEventActivity extends AppCompatActivity {
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(ContextCompat.getColor(AddEventActivity.this, R.color.colorPrimaryDark));
         }
+        Intent intent = getIntent();
+        userid = intent.getStringExtra("userid");
+        Button saveEvent = findViewById(R.id.save);
+        saveEvent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                EditText eventNameEditText = findViewById(R.id.eventname);
+                EditText locationEditText = findViewById(R.id.location);
+                TextView fromDateEditText = findViewById(R.id.fromdate);
+                TextView fromTimeEditText = findViewById(R.id.fromtime);
+                TextView toDateEditText = findViewById(R.id.todate);
+                TextView toTimeEditText = findViewById(R.id.totime);
+                eventName = eventNameEditText.getText().toString();
+                location = locationEditText.getText().toString();
+                startDate = fromDateEditText.getText().toString() + " " + fromTimeEditText.getText().toString();
+                endDate = toDateEditText.getText().toString() + " " + toTimeEditText.getText().toString();
+                new AddEvent().execute();
+            }
+        });
     }
 
     @Override
@@ -65,7 +94,7 @@ public class AddEventActivity extends AppCompatActivity {
         return true;
     }
 
-    public void getTime(View view) {
+    public void getTime(final View view) {
         LayoutInflater inflater = LayoutInflater.from(this);
         final View pickTime = inflater.inflate(R.layout.layout_time_pick, null);
         new AlertDialog.Builder(this)
@@ -83,14 +112,14 @@ public class AddEventActivity extends AppCompatActivity {
                         if (minutes.length() == 1)
                             minutes = "0" + minutes;
                         String time = hour +" : "+ minutes;
-                        Log.d("Abhinav", time);
-                        Toast.makeText(getBaseContext(), time, Toast.LENGTH_SHORT).show();
+                        TextView textView = (TextView) view;
+                        textView.setText(time);
                     }
                 })
                 .create().show();
     }
 
-    public void getDate(View view) {
+    public void getDate(final View view) {
         LayoutInflater inflater = LayoutInflater.from(this);
         final View pickDate = inflater.inflate(R.layout.layout_date_pick, null);
         new AlertDialog.Builder(this)
@@ -109,10 +138,71 @@ public class AddEventActivity extends AppCompatActivity {
                         if (day.length() == 1)
                             day = "0" + day;
                         String date = year +" - "+ month +" - "+ day;
-                        Log.d("Abhinav", date);
-                        Toast.makeText(getApplicationContext(), date, Toast.LENGTH_SHORT).show();
+                        TextView textView = (TextView) view;
+                        textView.setText(date);
                     }
                 })
                 .create().show();
+    }
+
+    private class AddEvent extends AsyncTask<Void,Void,Void> {
+        String webPage = "";
+        String baseUrl = "https://whhc.in/aaa/eventsbuddy/";
+        ProgressDialog progressDialog;
+        @Override
+        protected void onPreExecute(){
+            progressDialog = ProgressDialog.show(AddEventActivity.this, "Please Wait!","Validating!");
+            super.onPreExecute();
+        }
+        @Override
+        protected Void doInBackground(Void... voids){
+            URL url;
+            HttpURLConnection urlConnection = null;
+            try
+            {
+                String myURL = baseUrl+"addevent.php?userid="+userid+"&eventname="+eventName
+                        +"&address="+location+"&startdate="+startDate+"&enddate="+endDate;
+                myURL = myURL.replaceAll(" ","%20");
+                myURL = myURL.replaceAll("\\+","%2B");
+                myURL = myURL.replaceAll("\'", "%27");
+                myURL = myURL.replaceAll("\'", "%22");
+                myURL = myURL.replaceAll("\\(", "%28");
+                myURL = myURL.replaceAll("\\)", "%29");
+                myURL = myURL.replaceAll("\\{", "%7B");
+                myURL = myURL.replaceAll("\\}", "%7B");
+                myURL = myURL.replaceAll("\\]", "%22");
+                myURL = myURL.replaceAll("\\[", "%22");
+                url = new URL(myURL);
+                urlConnection = (HttpURLConnection) url.openConnection();
+                BufferedReader br=new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                String data;
+                while ((data=br.readLine()) != null)
+                    webPage=webPage+data;
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+            finally
+            {
+                if (urlConnection != null)
+                    urlConnection.disconnect();
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            progressDialog.dismiss();
+            if(webPage.equals("success"))
+            {
+                Toast.makeText(AddEventActivity.this, "Event Save Success", Toast.LENGTH_SHORT).show();
+                onBackPressed();
+            }
+            else
+            {
+                Toast.makeText(AddEventActivity.this, "Error Occurred: "+webPage, Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }

@@ -214,6 +214,7 @@ public class LoginActivity extends AppCompatActivity {
             progressDialog.dismiss();
             if (!webPage.isEmpty())
             {
+                userid = webPage;
                 Intent i = new Intent(LoginActivity.this, DashboardActivity.class);
                 i.putExtra("userid", userid);
                 startActivity(i);
