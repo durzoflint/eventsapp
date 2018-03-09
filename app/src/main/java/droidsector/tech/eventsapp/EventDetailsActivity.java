@@ -46,6 +46,7 @@ public class EventDetailsActivity extends AppCompatActivity {
         teamMembers.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                startActivity(new Intent(EventDetailsActivity.this, TeamMembersActivity.class));
             }
         });
         Button inviteeList = findViewById(R.id.inviteelist);
