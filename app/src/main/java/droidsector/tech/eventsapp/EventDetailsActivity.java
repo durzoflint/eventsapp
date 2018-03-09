@@ -3,6 +3,8 @@ package droidsector.tech.eventsapp;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 public class EventDetailsActivity extends AppCompatActivity {
@@ -28,5 +30,29 @@ public class EventDetailsActivity extends AppCompatActivity {
         date.setText("Date : "+from.substring(0, from.indexOf(' ')));
         TextView venue = findViewById(R.id.venue);
         venue.setText("Venue : "+location);
+        Button eventTasks = findViewById(R.id.eventtask);
+        eventTasks.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+            }
+        });
+        Button shoppingList = findViewById(R.id.shoppinglist);
+        shoppingList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+            }
+        });
+        Button teamMembers = findViewById(R.id.teammembers);
+        teamMembers.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+            }
+        });
+        Button inviteeList = findViewById(R.id.inviteelist);
+        inviteeList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+            }
+        });
     }
 }
