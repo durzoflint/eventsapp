@@ -15,7 +15,7 @@ public class EventDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_event_details);
         Intent intent = getIntent();
         String userId = intent.getStringExtra("userid");
-        String eventId = intent.getStringExtra("teamid");
+        final String eventId = intent.getStringExtra("teamid");
         String name = intent.getStringExtra("name");
         String description = intent.getStringExtra("description");
         String location = intent.getStringExtra("location");
@@ -34,6 +34,9 @@ public class EventDetailsActivity extends AppCompatActivity {
         eventTasks.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Intent intent1 = new Intent(EventDetailsActivity.this, EventTaskActivity.class);
+                intent1.putExtra("eventid", eventId);
+                startActivity(intent1);
             }
         });
         Button shoppingList = findViewById(R.id.shoppinglist);
