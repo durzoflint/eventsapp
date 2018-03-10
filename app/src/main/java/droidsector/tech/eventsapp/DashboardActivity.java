@@ -167,6 +167,8 @@ DashboardActivity extends AppCompatActivity
                 CoordinatorLayout coordinatorLayout = findViewById(R.id.include);
                 LinearLayout adminEvents = coordinatorLayout.findViewById(R.id.adminevents);
                 LinearLayout teamEvents = coordinatorLayout.findViewById(R.id.teamevents);
+                LinearLayout.LayoutParams wrapParams = new LinearLayout.LayoutParams
+                        (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                 LinearLayout.LayoutParams matchParams = new LinearLayout.LayoutParams
                         (LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1.0f);
                 final Context context = DashboardActivity.this;
@@ -206,11 +208,11 @@ DashboardActivity extends AppCompatActivity
                     linearLayout.setLayoutParams(matchParams);
                     TextView nameTV = new TextView(context);
                     nameTV.setTextSize(22);
-                    nameTV.setLayoutParams(matchParams);
+                    nameTV.setLayoutParams(wrapParams);
                     nameTV.setText(name);
                     linearLayout.addView(nameTV);
                     TextView fromTV = new TextView(context);
-                    fromTV.setLayoutParams(matchParams);
+                    fromTV.setLayoutParams(wrapParams);
                     fromTV.setText("Date : "+from.substring(0, from.indexOf(' ')));
                     linearLayout.addView(fromTV);
                     outerLinearLayout.addView(linearLayout);

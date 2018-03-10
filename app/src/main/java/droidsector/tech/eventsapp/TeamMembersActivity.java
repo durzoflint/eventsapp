@@ -25,7 +25,6 @@ public class TeamMembersActivity extends AppCompatActivity {
     private Uri uriContact;
     private String contactID;
     private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
-    AlertDialog.Builder builder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,8 +95,8 @@ public class TeamMembersActivity extends AppCompatActivity {
                     data.addView(radioButton);
                 }
             }
-            builder = new AlertDialog.Builder(this);
-            builder.setTitle("Select Number")
+            new AlertDialog.Builder(this)
+                    .setTitle("Select Number")
                     .setView(numberListLayout)
                     .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                         @Override

@@ -9,14 +9,14 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/name"
+        android:layout_above="@+id/taskname"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="50dp"
         android:gravity="center_horizontal"
         android:text="Hello\nYou seem to be signing in for the first time." />
 
     <EditText
-        android:id="@+id/name"
+        android:id="@+id/taskname"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
@@ -29,7 +29,7 @@
         android:id="@+id/submit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/name"
+        android:layout_below="@+id/taskname"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="47dp"
         android:text="Submit" />

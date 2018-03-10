@@ -14,9 +14,23 @@
         android:layout_centerHorizontal="true">
 
         <LinearLayout
-            android:id="@+id/data"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" />
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/data"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+
+            <Button
+                android:id="@+id/addtasks"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:text="Add Task +" />
+
+        </LinearLayout>
     </ScrollView>
 </RelativeLayout>
