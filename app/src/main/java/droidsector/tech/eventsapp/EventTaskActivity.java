@@ -9,7 +9,6 @@ import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -221,6 +220,8 @@ public class EventTaskActivity extends AppCompatActivity {
                     linearLayout.addView(descriptionTV);
                     TextView completedTV = new TextView(context);
                     completedTV.setLayoutParams(wrapParams);
+                    final int viewId = View.generateViewId();
+                    completedTV.setId(viewId);
                     completedTV.setText("Status : " + (completed.equals("y")?"Completed":"Pending"));
                     linearLayout.addView(completedTV);
                     outerLinearLayout.addView(linearLayout);
@@ -228,6 +229,18 @@ public class EventTaskActivity extends AppCompatActivity {
                     linearLayout.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
+                            new AlertDialog.Builder(EventTaskActivity.this)
+                                    .setTitle("Confirm Completion")
+                                    .setMessage("Are you sure that the task has been completed?")
+                                    .setIcon(android.R.drawable.ic_menu_agenda)
+                                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            new CompleteTask().execute(taskId, viewId+"");
+                                        }
+                                    })
+                                    .setNegativeButton(android.R.string.no, null)
+                                    .create().show();
                         }
                     });
                 }
@@ -235,4 +248,62 @@ public class EventTaskActivity extends AppCompatActivity {
         }
     }
 
+    private class CompleteTask extends AsyncTask<String,Void,Void> {
+        String webPage = "";
+        String baseUrl = "https://whhc.in/aaa/eventsbuddy/";
+        ProgressDialog progressDialog;
+        TextView textView;
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = ProgressDialog.show(EventTaskActivity.this, "Please Wait!", "Adding Task");
+        }
+        @Override
+        protected Void doInBackground(String... strings){
+            textView = findViewById(Integer.parseInt(strings[1]));
+            URL url;
+            HttpURLConnection urlConnection = null;
+            try
+            {
+                String myURL = baseUrl+"completetask.php?taskid="+strings[0];
+                myURL = myURL.replaceAll(" ","%20");
+                myURL = myURL.replaceAll("\\+","%2B");
+                myURL = myURL.replaceAll("\'", "%27");
+                myURL = myURL.replaceAll("\'", "%22");
+                myURL = myURL.replaceAll("\\(", "%28");
+                myURL = myURL.replaceAll("\\)", "%29");
+                myURL = myURL.replaceAll("\\{", "%7B");
+                myURL = myURL.replaceAll("\\}", "%7B");
+                myURL = myURL.replaceAll("\\]", "%22");
+                myURL = myURL.replaceAll("\\[", "%22");
+                url = new URL(myURL);
+                urlConnection = (HttpURLConnection) url.openConnection();
+                BufferedReader br=new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                String data;
+                while ((data=br.readLine()) != null)
+                    webPage=webPage+data;
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+            finally
+            {
+                if (urlConnection != null)
+                    urlConnection.disconnect();
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            progressDialog.dismiss();
+            if(webPage.equals("success"))
+            {
+                textView.setText("Status : Completed");
+            }
+            else
+                Toast.makeText(EventTaskActivity.this, "Some Error Occurred", Toast.LENGTH_SHORT).show();
+        }
+    }
 }
