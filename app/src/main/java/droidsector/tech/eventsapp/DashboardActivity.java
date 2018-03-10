@@ -175,10 +175,10 @@ DashboardActivity extends AppCompatActivity
                 while (webPage.contains("<br>"))
                 {
                     int brI = webPage.indexOf("<br>");
-                    final String id = webPage.substring(0, brI);
+                    final String category = webPage.substring(0, brI);
                     webPage = webPage.substring(brI+4);
                     brI = webPage.indexOf("<br>");
-                    final String category = webPage.substring(0, brI);
+                    final String id = webPage.substring(0, brI);
                     webPage = webPage.substring(brI+4);
                     brI = webPage.indexOf("<br>");
                     final String name = webPage.substring(0, brI);
