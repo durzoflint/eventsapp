@@ -239,6 +239,8 @@ public class EventTaskActivity extends AppCompatActivity {
                                             new CompleteTask().execute(taskId, viewId+"");
                                         }
                                     })
+                                    /*.setNeutralButton("Delete", null)
+                                    * Todo: Get 'category' of the event and then add this button*/
                                     .setNegativeButton(android.R.string.no, null)
                                     .create().show();
                         }

@@ -43,6 +43,9 @@ public class EventDetailsActivity extends AppCompatActivity {
         shoppingList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Intent intent1 = new Intent(EventDetailsActivity.this, ShoppingListActivity.class);
+                intent1.putExtra("eventid", eventId);
+                startActivity(intent1);
             }
         });
         Button teamMembers = findViewById(R.id.teammembers);

@@ -20,6 +20,15 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:ems="10"
-        android:hint="Description"
+        android:hint="Quantity"
         android:inputType="textCapSentences|textPersonName" />
+
+    <EditText
+        android:id="@+id/cost"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:ems="10"
+        android:hint="Cost"
+        android:inputType="numberDecimal" />
 </LinearLayout>
