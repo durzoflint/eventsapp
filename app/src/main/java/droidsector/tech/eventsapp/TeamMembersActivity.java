@@ -1,10 +1,14 @@
 package droidsector.tech.eventsapp;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
@@ -20,16 +24,25 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 public class TeamMembersActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_PICK_CONTACTS = 1;
     private Uri uriContact;
     private String contactID;
     private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
+    String eventid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_team_members);
+        Intent intent = getIntent();
+        eventid = intent.getStringExtra("eventid");
     }
 
     public void onClickSelectContact(View btnSelectContact) {
@@ -106,7 +119,7 @@ public class TeamMembersActivity extends AppCompatActivity {
                             if (id != -1)
                             {
                                 RadioButton radioButton = data.findViewById(id);
-                                sendToServerAndAddOnTheScreen(radioButton.getText().toString());
+                                new AddTeamMember().execute(radioButton.getText().toString());
                             }
                         }
                     })
@@ -116,9 +129,169 @@ public class TeamMembersActivity extends AppCompatActivity {
         }
     }
 
-    void sendToServerAndAddOnTheScreen(String number)
-    {
-        Log.d("Abhinav", number);
+    @Override
+    protected void onResume() {
+        super.onResume();
+        new FetchMembers().execute();
+    }
+
+    private class FetchMembers extends AsyncTask<Void,Void,Void> {
+        String webPage = "";
+        String baseUrl = "https://whhc.in/aaa/eventsbuddy/";
+        ProgressDialog progressDialog;
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = ProgressDialog.show(TeamMembersActivity.this, "Please Wait!", "Fetching Members");
+            LinearLayout data = findViewById(R.id.members);
+            data.removeAllViews();
+        }
+        @Override
+        protected Void doInBackground(Void... voids){
+            URL url;
+            HttpURLConnection urlConnection = null;
+            try
+            {
+                String myURL = baseUrl+"fetchteammembers.php?eventid="+eventid;
+                myURL = myURL.replaceAll(" ","%20");
+                myURL = myURL.replaceAll("\\+","%2B");
+                myURL = myURL.replaceAll("\'", "%27");
+                myURL = myURL.replaceAll("\'", "%22");
+                myURL = myURL.replaceAll("\\(", "%28");
+                myURL = myURL.replaceAll("\\)", "%29");
+                myURL = myURL.replaceAll("\\{", "%7B");
+                myURL = myURL.replaceAll("\\}", "%7B");
+                myURL = myURL.replaceAll("\\]", "%22");
+                myURL = myURL.replaceAll("\\[", "%22");
+                url = new URL(myURL);
+                urlConnection = (HttpURLConnection) url.openConnection();
+                BufferedReader br=new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                String data;
+                while ((data=br.readLine()) != null)
+                    webPage=webPage+data;
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+            finally
+            {
+                if (urlConnection != null)
+                    urlConnection.disconnect();
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            progressDialog.dismiss();
+            if(!webPage.isEmpty())
+            {
+                LinearLayout data = findViewById(R.id.members);
+                LinearLayout.LayoutParams wrapParams = new LinearLayout.LayoutParams
+                        (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                LinearLayout.LayoutParams matchParams = new LinearLayout.LayoutParams
+                        (LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1.0f);
+                final Context context = TeamMembersActivity.this;
+                while (webPage.contains("<br>"))
+                {
+                    int brI = webPage.indexOf("<br>");
+                    final String memberId = webPage.substring(0, brI);
+                    webPage = webPage.substring(brI+4);
+                    brI = webPage.indexOf("<br>");
+                    final String memberName = webPage.substring(0, brI);
+                    webPage = webPage.substring(brI+4);
+                    brI = webPage.indexOf("<br>");
+                    final String phoneNumber = webPage.substring(0, brI);
+                    webPage = webPage.substring(brI+4);
+                    brI = webPage.indexOf("<br>");
+                    final String accepted = webPage.substring(0, brI);
+                    webPage = webPage.substring(brI+4);
+                    LinearLayout outerLinearLayout = new LinearLayout(context);
+                    outerLinearLayout.setLayoutParams(matchParams);
+                    outerLinearLayout.setPadding(0,16,0,16);
+                    LinearLayout linearLayout = new LinearLayout(context);
+                    linearLayout.setOrientation(LinearLayout.VERTICAL);
+                    linearLayout.setPadding(32,16,32,16);
+                    linearLayout.setBackgroundColor(Color.WHITE);
+                    linearLayout.setLayoutParams(matchParams);
+                    TextView nameTV = new TextView(context);
+                    nameTV.setTextSize(22);
+                    nameTV.setLayoutParams(wrapParams);
+                    nameTV.setText(memberName);
+                    linearLayout.addView(nameTV);
+                    TextView descriptionTV = new TextView(context);
+                    descriptionTV.setLayoutParams(wrapParams);
+                    descriptionTV.setText("Contact : " + phoneNumber);
+                    linearLayout.addView(descriptionTV);
+                    TextView costTV = new TextView(context);
+                    costTV.setLayoutParams(wrapParams);
+                    costTV.setText("Status : Accepted");
+                    linearLayout.addView(costTV);
+                    if (memberId.equals("0"))
+                    {
+                        nameTV.setVisibility(View.GONE);
+                        descriptionTV.setText("Contact : " + accepted);
+                        costTV.setText("Status : Pending");
+                    }
+                    if(accepted.equals("admin"))
+                        costTV.setText("Status : Organiser");
+                    outerLinearLayout.addView(linearLayout);
+                    data.addView(outerLinearLayout);
+                }
+            }
+        }
+    }
+
+    private class AddTeamMember extends AsyncTask<String,Void,Void> {
+        String webPage = "", number = "";
+        String baseUrl = "https://whhc.in/aaa/eventsbuddy/";
+        ProgressDialog progressDialog;
+        @Override
+        protected void onPreExecute(){
+            progressDialog = ProgressDialog.show(TeamMembersActivity.this, "Please Wait!","Validating!");
+            super.onPreExecute();
+        }
+        @Override
+        protected Void doInBackground(String... strings){
+            number = strings[0];
+            URL url;
+            HttpURLConnection urlConnection = null;
+            try
+            {
+                String myURL = baseUrl+"addteammember.php?eventid="+eventid+"&number="+strings[0];
+                myURL = myURL.replaceAll(" ","%20");
+                myURL = myURL.replaceAll("\\+","%2B");
+                url = new URL(myURL);
+                urlConnection = (HttpURLConnection) url.openConnection();
+                BufferedReader br=new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                String data;
+                while ((data=br.readLine()) != null)
+                    webPage=webPage+data;
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+            finally
+            {
+                if (urlConnection != null)
+                    urlConnection.disconnect();
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            progressDialog.dismiss();
+            if(webPage.equals("success"))
+            {
+                Toast.makeText(TeamMembersActivity.this, "Member Added Successfully", Toast.LENGTH_SHORT).show();
+                onResume();
+            }
+            else
+                Toast.makeText(TeamMembersActivity.this, "Some Error Occurred", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
