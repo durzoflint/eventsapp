@@ -1,8 +1,8 @@
 package droidsector.tech.eventsapp;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -61,6 +61,9 @@ public class EventDetailsActivity extends AppCompatActivity {
         inviteeList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Intent intent1 = new Intent(EventDetailsActivity.this, InviteeActivity.class);
+                intent1.putExtra("eventid", eventId);
+                startActivity(intent1);
             }
         });
     }

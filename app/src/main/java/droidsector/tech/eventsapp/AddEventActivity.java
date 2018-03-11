@@ -3,18 +3,13 @@ package droidsector.tech.eventsapp;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.view.ContextThemeWrapper;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -149,7 +144,7 @@ public class AddEventActivity extends AppCompatActivity {
 
     private class AddEvent extends AsyncTask<Void,Void,Void> {
         String webPage = "";
-        String baseUrl = "https://whhc.in/aaa/eventsbuddy/";
+        String baseUrl = "http://eventsapp.co.in/eventsbuddy/";
         ProgressDialog progressDialog;
         @Override
         protected void onPreExecute(){

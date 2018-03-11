@@ -3,10 +3,9 @@ package droidsector.tech.eventsapp;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -119,7 +118,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private class CheckLogin extends AsyncTask<String,Void,Void> {
         String webPage = "", number = "";
-        String baseUrl = "https://whhc.in/aaa/eventsbuddy/";
+        String baseUrl = "http://eventsapp.co.in/eventsbuddy/";
         ProgressDialog progressDialog;
         @Override
         protected void onPreExecute(){
@@ -173,7 +172,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private class FetchUserId extends AsyncTask<String,Void,Void> {
         String webPage = "", number = "";
-        String baseUrl = "https://whhc.in/aaa/eventsbuddy/";
+        String baseUrl = "http://eventsapp.co.in/eventsbuddy/";
         ProgressDialog progressDialog;
         @Override
         protected void onPreExecute(){

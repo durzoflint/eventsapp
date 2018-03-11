@@ -6,9 +6,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -72,7 +72,7 @@ public class EventTaskActivity extends AppCompatActivity {
 
     private class AddTask extends AsyncTask<String,Void,Void> {
         String webPage = "";
-        String baseUrl = "https://whhc.in/aaa/eventsbuddy/";
+        String baseUrl = "http://eventsapp.co.in/eventsbuddy/";
         ProgressDialog progressDialog;
         @Override
         protected void onPreExecute() {
@@ -131,7 +131,7 @@ public class EventTaskActivity extends AppCompatActivity {
 
     private class FetchTasks extends AsyncTask<Void,Void,Void> {
         String webPage = "";
-        String baseUrl = "https://whhc.in/aaa/eventsbuddy/";
+        String baseUrl = "http://eventsapp.co.in/eventsbuddy/";
         ProgressDialog progressDialog;
         @Override
         protected void onPreExecute() {
@@ -252,7 +252,7 @@ public class EventTaskActivity extends AppCompatActivity {
 
     private class CompleteTask extends AsyncTask<String,Void,Void> {
         String webPage = "";
-        String baseUrl = "https://whhc.in/aaa/eventsbuddy/";
+        String baseUrl = "http://eventsapp.co.in/eventsbuddy/";
         ProgressDialog progressDialog;
         TextView textView;
         @Override

@@ -10,12 +10,11 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -137,7 +136,7 @@ public class TeamMembersActivity extends AppCompatActivity {
 
     private class FetchMembers extends AsyncTask<Void,Void,Void> {
         String webPage = "";
-        String baseUrl = "https://whhc.in/aaa/eventsbuddy/";
+        String baseUrl = "http://eventsapp.co.in/eventsbuddy/";
         ProgressDialog progressDialog;
         @Override
         protected void onPreExecute() {
@@ -245,7 +244,7 @@ public class TeamMembersActivity extends AppCompatActivity {
 
     private class AddTeamMember extends AsyncTask<String,Void,Void> {
         String webPage = "", number = "";
-        String baseUrl = "https://whhc.in/aaa/eventsbuddy/";
+        String baseUrl = "http://eventsapp.co.in/eventsbuddy/";
         ProgressDialog progressDialog;
         @Override
         protected void onPreExecute(){

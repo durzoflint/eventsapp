@@ -3,8 +3,8 @@ package droidsector.tech.eventsapp;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -40,7 +40,7 @@ public class RegisterUserActivity extends AppCompatActivity {
 
     private class RegisterUser extends AsyncTask<String,Void,Void> {
         String webPage = "",name="", number = "";
-        String baseUrl = "https://whhc.in/aaa/eventsbuddy/";
+        String baseUrl = "http://eventsapp.co.in/eventsbuddy/";
         ProgressDialog progressDialog;
         @Override
         protected void onPreExecute(){
