@@ -18,6 +18,8 @@ public class AddNewEventActivity extends AppCompatActivity {
 
     private ViewPager mViewPager;
 
+    public static int id;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,6 +31,8 @@ public class AddNewEventActivity extends AppCompatActivity {
 
         mViewPager = findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
+        mViewPager.beginFakeDrag();
+        mViewPager.setOffscreenPageLimit(2);
     }
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
@@ -39,6 +43,7 @@ public class AddNewEventActivity extends AppCompatActivity {
 
         @Override
         public Fragment getItem(int position) {
+            id = mViewPager.getId();
             switch (position) {
                 case 0:
                     return new BasicInfoFragment();
