@@ -40,6 +40,10 @@
         <activity
             android:name=".EventsActivity"
             android:label="@string/title_activity_events"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".AddNewEventActivity"
+            android:label="@string/title_activity_add_new_event"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

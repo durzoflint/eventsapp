@@ -1,5 +1,6 @@
 package droidsector.tech.eventsapp;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -15,11 +16,16 @@ import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
 
+import droidsector.tech.eventsapp.EventsActivityFragments.EventsOfMeFragment;
+import droidsector.tech.eventsapp.EventsActivityFragments.MyEventsFragment;
+
 public class EventsActivity extends AppCompatActivity {
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
     private ViewPager mViewPager;
+
+    String userid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +49,9 @@ public class EventsActivity extends AppCompatActivity {
 
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
+
+        Intent intent = getIntent();
+        userid = intent.getStringExtra("userid");
     }
 
 
@@ -56,7 +65,10 @@ public class EventsActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.action_settings) {
+        if (id == R.id.addevent) {
+            Intent intent = new Intent(this, AddNewEventActivity.class);
+            intent.putExtra("userid", userid);
+            startActivity(intent);
             return true;
         }
 
