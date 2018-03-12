@@ -38,8 +38,8 @@
         <activity android:name=".Old.TeamMembersActivity" />
         <activity android:name=".Old.InviteeActivity" />
         <activity
-            android:name=".DashboardActivity"
-            android:label="@string/title_activity_dashboard"
+            android:name=".EventsActivity"
+            android:label="@string/title_activity_events"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
