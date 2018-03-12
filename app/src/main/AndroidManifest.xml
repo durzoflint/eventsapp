@@ -18,25 +18,25 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".RegisterUserActivity" />
+        <activity android:name=".Old.RegisterUserActivity" />
         <activity
-            android:name=".DashboardActivity"
+            android:name=".Old.DashboardActivity"
             android:label="@string/title_activity_dashboard"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".AddEventActivity"
+            android:name=".Old.AddEventActivity"
             android:label="@string/title_activity_add_event"
-            android:parentActivityName=".DashboardActivity"
+            android:parentActivityName=".Old.DashboardActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="droidsector.tech.eventsapp.DashboardActivity" />
+                android:value="droidsector.tech.eventsapp.Old.DashboardActivity" />
         </activity>
-        <activity android:name=".EventDetailsActivity" />
-        <activity android:name=".EventTaskActivity" />
-        <activity android:name=".ShoppingListActivity" />
-        <activity android:name=".TeamMembersActivity" />
-        <activity android:name=".InviteeActivity"></activity>
+        <activity android:name=".Old.EventDetailsActivity" />
+        <activity android:name=".Old.EventTaskActivity" />
+        <activity android:name=".Old.ShoppingListActivity" />
+        <activity android:name=".Old.TeamMembersActivity" />
+        <activity android:name=".Old.InviteeActivity"></activity>
     </application>
 
 </manifest>

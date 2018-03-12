@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="@color/colorPrimary"
     android:padding="24dp"
-    tools:context="droidsector.tech.eventsapp.EventTaskActivity">
+    tools:context="droidsector.tech.eventsapp.Old.EventTaskActivity">
 
     <ScrollView
         android:layout_width="match_parent"

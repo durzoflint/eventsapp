@@ -1,4 +1,4 @@
-package droidsector.tech.eventsapp;
+package droidsector.tech.eventsapp.Old;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -28,6 +28,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
+import droidsector.tech.eventsapp.R;
 
 public class AddEventActivity extends AppCompatActivity {
     String userid = "", eventName, description, location, startDate, endDate;

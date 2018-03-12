@@ -21,6 +21,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Arrays;
 
+import droidsector.tech.eventsapp.Old.DashboardActivity;
+import droidsector.tech.eventsapp.Old.RegisterUserActivity;
+
 public class LoginActivity extends AppCompatActivity {
 
     public static final int RC_SIGN_IN = 1;

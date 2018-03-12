@@ -1,4 +1,4 @@
-package droidsector.tech.eventsapp;
+package droidsector.tech.eventsapp.Old;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
+import droidsector.tech.eventsapp.R;
 
 public class ShoppingListActivity extends AppCompatActivity {
     String eventid = "";

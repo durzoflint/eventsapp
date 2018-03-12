@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="@color/colorPrimary"
     android:padding="32dp"
-    tools:context="droidsector.tech.eventsapp.TeamMembersActivity">
+    tools:context="droidsector.tech.eventsapp.Old.TeamMembersActivity">
 
     <ScrollView
         android:layout_width="match_parent"
