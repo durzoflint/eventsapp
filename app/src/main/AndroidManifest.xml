@@ -36,7 +36,11 @@
         <activity android:name=".Old.EventTaskActivity" />
         <activity android:name=".Old.ShoppingListActivity" />
         <activity android:name=".Old.TeamMembersActivity" />
-        <activity android:name=".Old.InviteeActivity"></activity>
+        <activity android:name=".Old.InviteeActivity" />
+        <activity
+            android:name=".DashboardActivity"
+            android:label="@string/title_activity_dashboard"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
