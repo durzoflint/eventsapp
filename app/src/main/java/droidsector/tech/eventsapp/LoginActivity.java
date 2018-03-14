@@ -219,6 +219,7 @@ public class LoginActivity extends AppCompatActivity {
                 userid = webPage;
                 Intent i = new Intent(LoginActivity.this, DashboardActivity.class);
                 i.putExtra("userid", userid);
+                i.putExtra("number", number);
                 startActivity(i);
             }
             else
