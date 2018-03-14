@@ -21,6 +21,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Arrays;
 
+import droidsector.tech.eventsapp.Old.DashboardActivity;
 import droidsector.tech.eventsapp.Old.RegisterUserActivity;
 
 public class LoginActivity extends AppCompatActivity {
@@ -216,7 +217,7 @@ public class LoginActivity extends AppCompatActivity {
             if (!webPage.isEmpty())
             {
                 userid = webPage;
-                Intent i = new Intent(LoginActivity.this, EventsActivity.class);
+                Intent i = new Intent(LoginActivity.this, DashboardActivity.class);
                 i.putExtra("userid", userid);
                 startActivity(i);
             }
