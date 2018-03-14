@@ -3,6 +3,8 @@ package droidsector.tech.eventsapp.Old;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -10,6 +12,7 @@ import android.widget.TextView;
 import droidsector.tech.eventsapp.R;
 
 public class EventDetailsActivity extends AppCompatActivity {
+    String eventId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,7 +20,7 @@ public class EventDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_event_details);
         Intent intent = getIntent();
         String userId = intent.getStringExtra("userid");
-        final String eventId = intent.getStringExtra("teamid");
+        eventId = intent.getStringExtra("teamid");
         String name = intent.getStringExtra("name");
         String description = intent.getStringExtra("description");
         String location = intent.getStringExtra("location");
@@ -68,5 +71,26 @@ public class EventDetailsActivity extends AppCompatActivity {
                 startActivity(intent1);
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_event_details, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.share) {
+            Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+            sharingIntent.setType("text/plain");
+            String shareBody = "http://eventsapp.co.in/eventsbuddy/index.php?id=" + eventId;
+            sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+            startActivity(Intent.createChooser(sharingIntent, "Share via"));
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }
