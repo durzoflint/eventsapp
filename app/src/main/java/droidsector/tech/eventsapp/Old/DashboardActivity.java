@@ -80,7 +80,6 @@ DashboardActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.activity_dashboard_menu, menu);
         return true;
     }
@@ -93,7 +92,6 @@ DashboardActivity extends AppCompatActivity
             Intent intent = new Intent(DashboardActivity.this, AddEventActivity.class);
             intent.putExtra("userid", userid);
             startActivity(intent);
-            return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -170,6 +168,8 @@ DashboardActivity extends AppCompatActivity
                 CoordinatorLayout coordinatorLayout = findViewById(R.id.include);
                 LinearLayout adminEvents = coordinatorLayout.findViewById(R.id.adminevents);
                 LinearLayout teamEvents = coordinatorLayout.findViewById(R.id.teamevents);
+                adminEvents.removeAllViews();
+                teamEvents.removeAllViews();
                 LinearLayout.LayoutParams wrapParams = new LinearLayout.LayoutParams
                         (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                 LinearLayout.LayoutParams matchParams = new LinearLayout.LayoutParams
@@ -216,7 +216,7 @@ DashboardActivity extends AppCompatActivity
                     linearLayout.addView(nameTV);
                     TextView fromTV = new TextView(context);
                     fromTV.setLayoutParams(wrapParams);
-                    fromTV.setText("Date : "+from.substring(0, from.indexOf(' ')));
+                    fromTV.setText("Date : " + from.substring(0, from.indexOf(':') - 3));
                     linearLayout.addView(fromTV);
                     outerLinearLayout.addView(linearLayout);
                     if (category.equals("admin"))
@@ -380,8 +380,10 @@ DashboardActivity extends AppCompatActivity
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            if (webPage.equals("success"))
+            if (webPage.equals("success")) {
                 Toast.makeText(DashboardActivity.this, "Response Recorded Successfully", Toast.LENGTH_SHORT).show();
+                new FetchEvent().execute();
+            }
             else
                 Toast.makeText(DashboardActivity.this, "Some Error Occurred", Toast.LENGTH_SHORT).show();
         }
