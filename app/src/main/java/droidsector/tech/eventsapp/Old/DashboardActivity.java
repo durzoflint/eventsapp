@@ -326,13 +326,13 @@ DashboardActivity extends AppCompatActivity
                             .setPositiveButton("Accept", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                    new InvitationResponse().execute(id, "y");
+                                    new InvitationResponse().execute(id, "y", userid);
                                 }
                             })
                             .setNegativeButton("Reject", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                    new InvitationResponse().execute(id, "n");
+                                    new InvitationResponse().execute(id, "n", userid);
                                 }
                             })
                             .create().show();
@@ -350,7 +350,8 @@ DashboardActivity extends AppCompatActivity
             URL url;
             HttpURLConnection urlConnection = null;
             try {
-                String myURL = baseUrl + "invitationresponse.php?invitationid=" + strings[0] + "&response=" + strings[1];
+                String myURL = baseUrl + "invitationresponse.php?invitationid=" + strings[0] +
+                        "&response=" + strings[1] + "&memberid=" + strings[2];
                 myURL = myURL.replaceAll(" ", "%20");
                 myURL = myURL.replaceAll("\\+", "%2B");
                 myURL = myURL.replaceAll("\'", "%27");
