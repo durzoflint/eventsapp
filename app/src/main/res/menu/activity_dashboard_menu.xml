@@ -7,4 +7,8 @@
         android:orderInCategory="100"
         android:title="Add Event"
         app:showAsAction="always" />
+    <item
+        android:id="@+id/logout"
+        android:title="Logout"
+        app:showAsAction="never" />
 </menu>
