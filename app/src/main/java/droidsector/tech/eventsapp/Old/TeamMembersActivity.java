@@ -17,6 +17,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -45,6 +46,10 @@ public class TeamMembersActivity extends AppCompatActivity {
         Intent intent = getIntent();
         eventid = intent.getStringExtra("eventid");
         category = intent.getStringExtra("category");
+        if (category.equals("admin")) {
+            Button addTeamMember = findViewById(R.id.addteammember);
+            addTeamMember.setVisibility(View.VISIBLE);
+        }
     }
 
     public void onClickSelectContact(View btnSelectContact) {
