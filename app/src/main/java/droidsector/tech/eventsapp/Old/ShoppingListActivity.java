@@ -137,6 +137,60 @@ public class ShoppingListActivity extends AppCompatActivity {
         }
     }
 
+    private class RemoveItem extends AsyncTask<String, Void, Void> {
+        String webPage = "";
+        String baseUrl = "http://eventsapp.co.in/eventsbuddy/";
+        ProgressDialog progressDialog;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = ProgressDialog.show(ShoppingListActivity.this, "Please Wait!", "Removing Item");
+        }
+
+        @Override
+        protected Void doInBackground(String... strings) {
+            URL url;
+            HttpURLConnection urlConnection = null;
+            try {
+                String myURL = baseUrl + "removeitem.php?itemid=" + strings[0];
+                myURL = myURL.replaceAll(" ", "%20");
+                myURL = myURL.replaceAll("\\+", "%2B");
+                myURL = myURL.replaceAll("\'", "%27");
+                myURL = myURL.replaceAll("\'", "%22");
+                myURL = myURL.replaceAll("\\(", "%28");
+                myURL = myURL.replaceAll("\\)", "%29");
+                myURL = myURL.replaceAll("\\{", "%7B");
+                myURL = myURL.replaceAll("\\}", "%7B");
+                myURL = myURL.replaceAll("\\]", "%22");
+                myURL = myURL.replaceAll("\\[", "%22");
+                url = new URL(myURL);
+                urlConnection = (HttpURLConnection) url.openConnection();
+                BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                String data;
+                while ((data = br.readLine()) != null)
+                    webPage = webPage + data;
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (urlConnection != null)
+                    urlConnection.disconnect();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            progressDialog.dismiss();
+            if (webPage.equals("success")) {
+                Toast.makeText(ShoppingListActivity.this, "Item Removed Successfully", Toast.LENGTH_SHORT).show();
+                onResume();
+            } else
+                Toast.makeText(ShoppingListActivity.this, "Some Error Occurred", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     private class FetchItems extends AsyncTask<Void,Void,Void> {
         String webPage = "";
         String baseUrl = "http://eventsapp.co.in/eventsbuddy/";
@@ -261,6 +315,7 @@ public class ShoppingListActivity extends AppCompatActivity {
                                         .setNeutralButton("Delete", new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialogInterface, int i) {
+                                                new RemoveItem().execute(itemId);
                                             }
                                         });
                             }
