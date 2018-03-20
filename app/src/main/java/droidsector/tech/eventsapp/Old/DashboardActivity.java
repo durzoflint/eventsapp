@@ -216,7 +216,7 @@ DashboardActivity extends AppCompatActivity
                     linearLayout.addView(nameTV);
                     TextView fromTV = new TextView(context);
                     fromTV.setLayoutParams(wrapParams);
-                    fromTV.setText("Date : " + from.substring(0, from.indexOf(':') - 3));
+                    fromTV.setText("Date : " + from);
                     linearLayout.addView(fromTV);
                     outerLinearLayout.addView(linearLayout);
                     if (category.equals("admin"))

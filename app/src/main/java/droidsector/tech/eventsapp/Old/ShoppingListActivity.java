@@ -27,7 +27,7 @@ import java.net.URL;
 import droidsector.tech.eventsapp.R;
 
 public class ShoppingListActivity extends AppCompatActivity {
-    String eventid = "";
+    String eventid = "", category = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +36,10 @@ public class ShoppingListActivity extends AppCompatActivity {
         setTitle("Shopping List");
         Intent intent = getIntent();
         eventid = intent.getStringExtra("eventid");
+        category = intent.getStringExtra("category");
         Button addTask = findViewById(R.id.addtasks);
+        if (category.equals("admin"))
+            addTask.setVisibility(View.VISIBLE);
         addTask.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -242,7 +245,8 @@ public class ShoppingListActivity extends AppCompatActivity {
                     linearLayout.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            new AlertDialog.Builder(ShoppingListActivity.this)
+                            AlertDialog.Builder dialog = new AlertDialog.Builder(ShoppingListActivity.this);
+                            dialog
                                     .setTitle("Confirm Completion")
                                     .setMessage("Are you sure that the task has been completed?")
                                     .setIcon(android.R.drawable.ic_menu_agenda)
@@ -251,9 +255,16 @@ public class ShoppingListActivity extends AppCompatActivity {
                                         public void onClick(DialogInterface dialogInterface, int i) {
                                             new BoughtItem().execute(itemId, viewId+"");
                                         }
-                                    })
-                                    /*.setNeutralButton("Delete", null)
-                                    * Todo: Get 'category' of the event and then add this button*/
+                                    });
+                            if (category.equals("admin")) {
+                                dialog
+                                        .setNeutralButton("Delete", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                            }
+                                        });
+                            }
+                            dialog
                                     .setNegativeButton(android.R.string.no, null)
                                     .create().show();
                         }

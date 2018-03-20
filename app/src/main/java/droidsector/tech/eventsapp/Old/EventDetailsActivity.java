@@ -24,7 +24,7 @@ public class EventDetailsActivity extends AppCompatActivity {
         String name = intent.getStringExtra("name");
         String description = intent.getStringExtra("description");
         String location = intent.getStringExtra("location");
-        String category = intent.getStringExtra("category");
+        final String category = intent.getStringExtra("category");
         String from = intent.getStringExtra("from");
         String to = intent.getStringExtra("to");
         String teamMemberCount = intent.getStringExtra("teamMemberCount");
@@ -40,6 +40,7 @@ public class EventDetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent1 = new Intent(EventDetailsActivity.this, EventTaskActivity.class);
+                intent1.putExtra("category", category);
                 intent1.putExtra("eventid", eventId);
                 startActivity(intent1);
             }
@@ -49,6 +50,7 @@ public class EventDetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent1 = new Intent(EventDetailsActivity.this, ShoppingListActivity.class);
+                intent1.putExtra("category", category);
                 intent1.putExtra("eventid", eventId);
                 startActivity(intent1);
             }
@@ -58,6 +60,7 @@ public class EventDetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent1 = new Intent(EventDetailsActivity.this, TeamMembersActivity.class);
+                intent1.putExtra("category", category);
                 intent1.putExtra("eventid", eventId);
                 startActivity(intent1);
             }

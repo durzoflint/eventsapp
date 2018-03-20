@@ -36,7 +36,7 @@ public class TeamMembersActivity extends AppCompatActivity {
     private Uri uriContact;
     private String contactID;
     private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
-    String eventid;
+    String eventid = "", category = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +44,7 @@ public class TeamMembersActivity extends AppCompatActivity {
         setContentView(R.layout.activity_team_members);
         Intent intent = getIntent();
         eventid = intent.getStringExtra("eventid");
+        category = intent.getStringExtra("category");
     }
 
     public void onClickSelectContact(View btnSelectContact) {
@@ -237,6 +238,25 @@ public class TeamMembersActivity extends AppCompatActivity {
                     }
                     if(accepted.equals("admin"))
                         costTV.setText("Status : Organiser");
+                    if (category.equals("admin")) {
+                        linearLayout.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                AlertDialog.Builder dialog = new AlertDialog.Builder(TeamMembersActivity.this);
+                                dialog
+                                        .setTitle("Remove Team Member")
+                                        .setMessage("Are you sure that the you want to remove the team member?")
+                                        .setIcon(android.R.drawable.ic_menu_agenda)
+                                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                            }
+                                        })
+                                        .setNegativeButton(android.R.string.no, null)
+                                        .create().show();
+                            }
+                        });
+                    }
                     outerLinearLayout.addView(linearLayout);
                     data.addView(outerLinearLayout);
                 }
