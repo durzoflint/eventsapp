@@ -7,6 +7,8 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -33,6 +35,40 @@ public class InviteeActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         new FetchMembers().execute();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_event_details, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.share) {
+            Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+            sharingIntent.setType("text/plain");
+            String shareBody = "http://eventsapp.co.in/eventsbuddy/index.php?id=" + eventid;
+            sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+            startActivity(Intent.createChooser(sharingIntent, "Share via"));
+            /*LayoutInflater inflater = LayoutInflater.from(this);
+            final View inviteeNameLayout = inflater.inflate(R.layout.layout_invitee_name, null);
+            new AlertDialog.Builder(this)
+                    .setTitle("Enter Details")
+                    .setView(inviteeNameLayout)
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            //Todo: Also add it in the database
+                        }
+                    })
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .create().show();*/
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private class FetchMembers extends AsyncTask<Void, Void, Void> {

@@ -2,9 +2,11 @@ package droidsector.tech.eventsapp.Old;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -26,6 +28,9 @@ public class RegisterUserActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register_user);
         Intent intent = getIntent();
         final String number = intent.getStringExtra("number");
+        SharedPreferences notifPrefs = getSharedPreferences("notifPrefs", MODE_PRIVATE);
+        final String token = notifPrefs.getString("notifToken", "");
+        Log.d("Abhinav", "In register activity : " + token);
         Button submit = findViewById(R.id.submit);
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -34,7 +39,7 @@ public class RegisterUserActivity extends AppCompatActivity {
                 String name = nameEditText.getText().toString();
                 if (!name.isEmpty())
                 {
-                    new RegisterUser().execute(name, number);
+                    new RegisterUser().execute(name, number, token);
                 }
             }
         });
@@ -57,7 +62,7 @@ public class RegisterUserActivity extends AppCompatActivity {
             HttpURLConnection urlConnection = null;
             try
             {
-                String myURL = baseUrl+"registeruser.php?name="+name+"&number="+number;
+                String myURL = baseUrl + "registeruser.php?name=" + name + "&number=" + number + "&token=" + strings[2];
                 myURL = myURL.replaceAll(" ","%20");
                 myURL = myURL.replaceAll("\\+","%2B");
                 url = new URL(myURL);
@@ -91,6 +96,7 @@ public class RegisterUserActivity extends AppCompatActivity {
                 String id = webPage.substring(0, brI);
                 Intent intent = new Intent(RegisterUserActivity.this, DashboardActivity.class);
                 intent.putExtra("userid", id);
+                intent.putExtra("number", number);
                 startActivity(intent);
             }
             else

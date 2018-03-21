@@ -106,8 +106,9 @@ public class TeamMembersActivity extends AppCompatActivity {
             final View numberListLayout = inflater.inflate(R.layout.layout_number_list, null);
             while (cursorPhone.moveToNext()){
                 contactNumber = cursorPhone.getString(cursorPhone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DATA));
-                if (!contactNumber.contains(" "))
+                //if (!contactNumber.contains(" "))
                 {
+                    contactNumber = contactNumber.replaceAll(" ", "");
                     RadioGroup data = numberListLayout.findViewById(R.id.data);
                     RadioButton radioButton = new RadioButton(this);
                     radioButton.setPadding(0,8,0,8);
