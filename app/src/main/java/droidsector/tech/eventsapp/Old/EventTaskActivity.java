@@ -55,6 +55,7 @@ public class EventTaskActivity extends AppCompatActivity {
                                 EditText descriptionText = addTaskLayout.findViewById(R.id.description);
                                 String name = nameText.getText().toString();
                                 String description = descriptionText.getText().toString();
+                                //Todo: Make it possible to assign a task to a particular team member
                                 if (!name.isEmpty() && !description.isEmpty())
                                 {
                                     new AddTask().execute(name, description);
