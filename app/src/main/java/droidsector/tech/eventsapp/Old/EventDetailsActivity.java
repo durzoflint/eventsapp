@@ -21,7 +21,7 @@ public class EventDetailsActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String userId = intent.getStringExtra("userid");
         eventId = intent.getStringExtra("teamid");
-        String name = intent.getStringExtra("name");
+        final String name = intent.getStringExtra("name");
         String description = intent.getStringExtra("description");
         String location = intent.getStringExtra("location");
         final String category = intent.getStringExtra("category");
@@ -41,6 +41,7 @@ public class EventDetailsActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent1 = new Intent(EventDetailsActivity.this, EventTaskActivity.class);
                 intent1.putExtra("category", category);
+                intent1.putExtra("eventname", name);
                 intent1.putExtra("eventid", eventId);
                 startActivity(intent1);
             }

@@ -9,11 +9,14 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,11 +25,14 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
 import droidsector.tech.eventsapp.R;
 
 public class EventTaskActivity extends AppCompatActivity {
-    String eventid = "", category = "";
+    ArrayList<String> names;
+    ArrayList<String> memberIds;
+    String eventid = "", category = "", eventname = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +40,7 @@ public class EventTaskActivity extends AppCompatActivity {
         setContentView(R.layout.activity_event_task);
         setTitle("Tasks");
         Intent intent = getIntent();
+        eventname = intent.getStringExtra("eventname");
         eventid = intent.getStringExtra("eventid");
         category = intent.getStringExtra("category");
         Button addTask = findViewById(R.id.addtasks);
@@ -44,6 +51,10 @@ public class EventTaskActivity extends AppCompatActivity {
             public void onClick(View view) {
                 LayoutInflater inflater = LayoutInflater.from(EventTaskActivity.this);
                 final View addTaskLayout = inflater.inflate(R.layout.layout_add_task, null);
+                final Spinner spinner = addTaskLayout.findViewById(R.id.spinner);
+                names = new ArrayList<>();
+                memberIds = new ArrayList<>();
+                new FetchMembers().execute(spinner);
                 new AlertDialog.Builder(EventTaskActivity.this)
                         .setTitle("Add Task")
                         .setIcon(android.R.drawable.ic_menu_agenda)
@@ -55,10 +66,10 @@ public class EventTaskActivity extends AppCompatActivity {
                                 EditText descriptionText = addTaskLayout.findViewById(R.id.description);
                                 String name = nameText.getText().toString();
                                 String description = descriptionText.getText().toString();
-                                //Todo: Make it possible to assign a task to a particular team member
+                                String assignedTo = getIdsFromSpinnerValues(names, memberIds, spinner.getSelectedItem().toString());
                                 if (!name.isEmpty() && !description.isEmpty())
                                 {
-                                    new AddTask().execute(name, description);
+                                    new AddTask().execute(name, description, assignedTo);
                                 }
                                 else
                                     Toast.makeText(EventTaskActivity.this, "Details cannot be empty", Toast.LENGTH_SHORT).show();
@@ -76,9 +87,80 @@ public class EventTaskActivity extends AppCompatActivity {
         new FetchTasks().execute();
     }
 
+    private class FetchMembers extends AsyncTask<Spinner, Void, Void> {
+        Spinner spinner;
+        String webPage = "";
+        String baseUrl = "http://eventsapp.co.in/eventsbuddy/";
+
+        @Override
+        protected Void doInBackground(Spinner... spinners) {
+            spinner = spinners[0];
+            URL url;
+            HttpURLConnection urlConnection = null;
+            try {
+                String myURL = baseUrl + "fetchteammembers.php?eventid=" + eventid;
+                myURL = myURL.replaceAll(" ", "%20");
+                myURL = myURL.replaceAll("\\+", "%2B");
+                myURL = myURL.replaceAll("\'", "%27");
+                myURL = myURL.replaceAll("\'", "%22");
+                myURL = myURL.replaceAll("\\(", "%28");
+                myURL = myURL.replaceAll("\\)", "%29");
+                myURL = myURL.replaceAll("\\{", "%7B");
+                myURL = myURL.replaceAll("\\}", "%7B");
+                myURL = myURL.replaceAll("\\]", "%22");
+                myURL = myURL.replaceAll("\\[", "%22");
+                url = new URL(myURL);
+                urlConnection = (HttpURLConnection) url.openConnection();
+                BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                String data;
+                while ((data = br.readLine()) != null)
+                    webPage = webPage + data;
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (urlConnection != null)
+                    urlConnection.disconnect();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            if (!webPage.isEmpty()) {
+                while (webPage.contains("<br>")) {
+                    int brI = webPage.indexOf("<br>");
+                    final String memberId = webPage.substring(0, brI);
+                    webPage = webPage.substring(brI + 4);
+                    brI = webPage.indexOf("<br>");
+                    final String memberName = webPage.substring(0, brI);
+                    webPage = webPage.substring(brI + 4);
+                    brI = webPage.indexOf("<br>");
+                    final String phoneNumber = webPage.substring(0, brI);
+                    webPage = webPage.substring(brI + 4);
+                    brI = webPage.indexOf("<br>");
+                    final String accepted = webPage.substring(0, brI);
+                    webPage = webPage.substring(brI + 4);
+                    brI = webPage.indexOf("<br>");
+                    final String id = webPage.substring(0, brI);
+                    webPage = webPage.substring(brI + 4);
+                    if (accepted.equals("y") || accepted.equals("admin")) {
+                        memberIds.add(memberId);
+                        names.add(memberName);
+                    }
+                }
+                ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(EventTaskActivity.this,
+                        android.R.layout.simple_spinner_item, names);
+                dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                spinner.setAdapter(dataAdapter);
+            }
+        }
+    }
+
     private class AddTask extends AsyncTask<String,Void,Void> {
         String webPage = "";
         String baseUrl = "http://eventsapp.co.in/eventsbuddy/";
+        String userid;
         ProgressDialog progressDialog;
         @Override
         protected void onPreExecute() {
@@ -91,8 +173,9 @@ public class EventTaskActivity extends AppCompatActivity {
             HttpURLConnection urlConnection = null;
             try
             {
+                userid = strings[2];
                 String myURL = baseUrl+"addtask.php?eventid="+eventid+"&taskname="+strings[0]
-                        +"&description="+strings[1]+"&assignedto=0";
+                        + "&description=" + strings[1] + "&assignedto=" + userid;
                 myURL = myURL.replaceAll(" ","%20");
                 myURL = myURL.replaceAll("\\+","%2B");
                 myURL = myURL.replaceAll("\'", "%27");
@@ -128,6 +211,7 @@ public class EventTaskActivity extends AppCompatActivity {
             if(webPage.equals("success"))
             {
                 Toast.makeText(EventTaskActivity.this, "Task Added Successfully", Toast.LENGTH_SHORT).show();
+                new SendNotif().execute(userid, eventname, "A Task has been assigned to you");
                 onResume();
             }
             else
@@ -374,6 +458,51 @@ public class EventTaskActivity extends AppCompatActivity {
             }
             else
                 Toast.makeText(EventTaskActivity.this, "Some Error Occurred", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    String getIdsFromSpinnerValues(ArrayList<String> A, ArrayList<String> B, String string) {
+        for (int i = 0; i < A.size(); i++) {
+            if (A.get(i).equals(string))
+                return B.get(i);
+        }
+        return "";
+    }
+
+    private class SendNotif extends AsyncTask<String, Void, Void> {
+        String webPage = "";
+        String baseUrl = "http://eventsapp.co.in/eventsbuddy/";
+
+        @Override
+        protected Void doInBackground(String... strings) {
+            URL url;
+            HttpURLConnection urlConnection = null;
+            try {
+                String myURL = baseUrl + "notificationtoone.php?userid=" + strings[0] + "&body=" + strings[2] + "&title=" + strings[1];
+                myURL = myURL.replaceAll(" ", "%20");
+                myURL = myURL.replaceAll("\\+", "%2B");
+                myURL = myURL.replaceAll("\'", "%27");
+                myURL = myURL.replaceAll("\'", "%22");
+                myURL = myURL.replaceAll("\\(", "%28");
+                myURL = myURL.replaceAll("\\)", "%29");
+                myURL = myURL.replaceAll("\\{", "%7B");
+                myURL = myURL.replaceAll("\\}", "%7B");
+                myURL = myURL.replaceAll("\\]", "%22");
+                myURL = myURL.replaceAll("\\[", "%22");
+                Log.d("Abhinav", myURL);
+                url = new URL(myURL);
+                urlConnection = (HttpURLConnection) url.openConnection();
+                BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                String data;
+                while ((data = br.readLine()) != null)
+                    webPage = webPage + data;
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (urlConnection != null)
+                    urlConnection.disconnect();
+            }
+            return null;
         }
     }
 }
