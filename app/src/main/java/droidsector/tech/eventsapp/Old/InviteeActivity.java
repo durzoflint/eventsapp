@@ -204,7 +204,9 @@ public class InviteeActivity extends AppCompatActivity {
                     final String plus = webPage.substring(0, brI);
                     webPage = webPage.substring(brI + 4);
                     brI = webPage.indexOf("<br>");
-                    final String going = webPage.substring(0, brI);
+                    String going = webPage.substring(0, brI);
+                    if (going.isEmpty())
+                        going = "Invited";
                     webPage = webPage.substring(brI + 4);
                     LinearLayout outerLinearLayout = new LinearLayout(context);
                     outerLinearLayout.setLayoutParams(matchParams);
