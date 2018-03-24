@@ -80,7 +80,8 @@
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/colorAccent" />
 
-        <activity android:name=".Old.PendingInvitationsActivity"></activity>
+        <activity android:name=".Old.PendingInvitationsActivity" />
+        <activity android:name=".Old.BudgetPlannerActivity"></activity>
     </application>
 
 </manifest>

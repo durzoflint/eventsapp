@@ -71,6 +71,15 @@
                         android:hint="Location"
                         android:inputType="textPostalAddress" />
 
+                    <EditText
+                        android:id="@+id/budget"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
+                        android:ems="10"
+                        android:hint="Budget"
+                        android:inputType="number" />
+
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

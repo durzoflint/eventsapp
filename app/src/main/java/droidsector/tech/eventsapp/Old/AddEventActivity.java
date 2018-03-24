@@ -32,7 +32,7 @@ import java.net.URL;
 import droidsector.tech.eventsapp.R;
 
 public class AddEventActivity extends AppCompatActivity {
-    String userid = "", eventName, description, location, startDate, endDate;
+    String userid = "", eventName, description, location, startDate, endDate, budget;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +56,7 @@ public class AddEventActivity extends AppCompatActivity {
                 EditText eventNameEditText = findViewById(R.id.eventname);
                 EditText descriptionEditText = findViewById(R.id.description);
                 EditText locationEditText = findViewById(R.id.location);
+                EditText budgetEditText = findViewById(R.id.budget);
                 TextView fromDateEditText = findViewById(R.id.fromdate);
                 TextView fromTimeEditText = findViewById(R.id.fromtime);
                 TextView toDateEditText = findViewById(R.id.todate);
@@ -65,6 +66,7 @@ public class AddEventActivity extends AppCompatActivity {
                 location = locationEditText.getText().toString();
                 startDate = fromDateEditText.getText().toString() + " " + fromTimeEditText.getText().toString();
                 endDate = toDateEditText.getText().toString() + " " + toTimeEditText.getText().toString();
+                budget = budgetEditText.getText().toString();
                 new AddEvent().execute();
             }
         });
@@ -159,8 +161,8 @@ public class AddEventActivity extends AppCompatActivity {
             HttpURLConnection urlConnection = null;
             try
             {
-                String myURL = baseUrl+"addevent.php?userid="+userid+"&eventname="+eventName
-                        +"&description="+description+"&address="+location+"&startdate="+startDate+"&enddate="+endDate;
+                String myURL = baseUrl + "addevent.php?userid=" + userid + "&eventname=" + eventName + "&description=" + description
+                        + "&address=" + location + "&startdate=" + startDate + "&enddate=" + endDate + "&budget=" + budget;
                 myURL = myURL.replaceAll(" ","%20");
                 myURL = myURL.replaceAll("\\+","%2B");
                 myURL = myURL.replaceAll("\'", "%27");

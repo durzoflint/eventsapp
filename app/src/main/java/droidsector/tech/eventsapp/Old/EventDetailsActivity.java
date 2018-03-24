@@ -88,6 +88,15 @@ public class EventDetailsActivity extends AppCompatActivity {
                 startActivity(intent1);
             }
         });
+        Button budgetPlanner = findViewById(R.id.budgetplanner);
+        budgetPlanner.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent1 = new Intent(EventDetailsActivity.this, BudgetPlannerActivity.class);
+                intent1.putExtra("eventid", eventId);
+                startActivity(intent1);
+            }
+        });
     }
 
     @Override
