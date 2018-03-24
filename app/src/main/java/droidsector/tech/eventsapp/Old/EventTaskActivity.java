@@ -9,7 +9,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -489,7 +488,6 @@ public class EventTaskActivity extends AppCompatActivity {
                 myURL = myURL.replaceAll("\\}", "%7B");
                 myURL = myURL.replaceAll("\\]", "%22");
                 myURL = myURL.replaceAll("\\[", "%22");
-                Log.d("Abhinav", myURL);
                 url = new URL(myURL);
                 urlConnection = (HttpURLConnection) url.openConnection();
                 BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
