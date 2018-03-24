@@ -10,6 +10,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -18,7 +19,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -31,8 +31,7 @@ import java.net.URL;
 import droidsector.tech.eventsapp.R;
 
 public class
-DashboardActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+DashboardActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     String userid, number;
 
@@ -43,11 +42,11 @@ DashboardActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        /*DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
-        toggle.syncState();*/
+        toggle.syncState();
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -111,18 +110,11 @@ DashboardActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+        if (id == R.id.pending) {
+            Intent intent = new Intent(this, PendingInvitationsActivity.class);
+            intent.putExtra("userid", userid);
+            intent.putExtra("number", number);
+            startActivity(intent);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -301,136 +293,20 @@ DashboardActivity extends AppCompatActivity
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             if (!webPage.isEmpty()) {
-                final Context context = DashboardActivity.this;
-                while (webPage.contains("<br>")) {
-                    int brI = webPage.indexOf("<br>");
-                    final String id = webPage.substring(0, brI);
-                    webPage = webPage.substring(brI + 4);
-                    brI = webPage.indexOf("<br>");
-                    final String eventId = webPage.substring(0, brI);
-                    webPage = webPage.substring(brI + 4);
-                    brI = webPage.indexOf("<br>");
-                    final String name = webPage.substring(0, brI);
-                    webPage = webPage.substring(brI + 4);
-                    brI = webPage.indexOf("<br>");
-                    final String description = webPage.substring(0, brI);
-                    webPage = webPage.substring(brI + 4);
-                    brI = webPage.indexOf("<br>");
-                    final String location = webPage.substring(0, brI);
-                    webPage = webPage.substring(brI + 4);
-                    brI = webPage.indexOf("<br>");
-                    final String from = webPage.substring(0, brI);
-                    webPage = webPage.substring(brI + 4);
-                    brI = webPage.indexOf("<br>");
-                    final String to = webPage.substring(0, brI);
-                    webPage = webPage.substring(brI + 4);
-                    brI = webPage.indexOf("<br>");
-                    final String teamMemberCount = webPage.substring(0, brI);
-                    webPage = webPage.substring(brI + 4);
-                    new AlertDialog.Builder(context)
-                            .setTitle("Team Member Invitation")
-                            .setMessage("Event Name: " + name + "\nDescription: " + description + "\nLocation: " + location +
-                                    "\nFrom: " + from + "\nTo: " + to)
-                            .setPositiveButton("Accept", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    new InvitationResponse().execute(id, "y", userid);
-                                    new SendNotif().execute(eventId, name, "New Team Member Added");
-                                }
-                            })
-                            .setNegativeButton("Reject", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    new InvitationResponse().execute(id, "n", userid);
-                                }
-                            })
-                            .create().show();
-                }
+                new AlertDialog.Builder(DashboardActivity.this)
+                        .setMessage("You have pending invitations")
+                        .setPositiveButton("View", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                Intent intent = new Intent(DashboardActivity.this, PendingInvitationsActivity.class);
+                                intent.putExtra("number", number);
+                                intent.putExtra("userid", userid);
+                                startActivity(intent);
+                            }
+                        })
+                        .setNegativeButton("Skip", null)
+                        .create().show();
             }
-        }
-    }
-
-    private class SendNotif extends AsyncTask<String, Void, Void> {
-        String webPage = "";
-        String baseUrl = "http://eventsapp.co.in/eventsbuddy/";
-
-        @Override
-        protected Void doInBackground(String... strings) {
-            URL url;
-            HttpURLConnection urlConnection = null;
-            try {
-                String myURL = baseUrl + "notification.php?eventid=" + strings[0] + "&body=" + strings[2] + "&title=" + strings[1];
-                myURL = myURL.replaceAll(" ", "%20");
-                myURL = myURL.replaceAll("\\+", "%2B");
-                myURL = myURL.replaceAll("\'", "%27");
-                myURL = myURL.replaceAll("\'", "%22");
-                myURL = myURL.replaceAll("\\(", "%28");
-                myURL = myURL.replaceAll("\\)", "%29");
-                myURL = myURL.replaceAll("\\{", "%7B");
-                myURL = myURL.replaceAll("\\}", "%7B");
-                myURL = myURL.replaceAll("\\]", "%22");
-                myURL = myURL.replaceAll("\\[", "%22");
-                url = new URL(myURL);
-                urlConnection = (HttpURLConnection) url.openConnection();
-                BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-                String data;
-                while ((data = br.readLine()) != null)
-                    webPage = webPage + data;
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                if (urlConnection != null)
-                    urlConnection.disconnect();
-            }
-            return null;
-        }
-    }
-
-    private class InvitationResponse extends AsyncTask<String, Void, Void> {
-        String webPage = "";
-        String baseUrl = "http://eventsapp.co.in/eventsbuddy/";
-
-        @Override
-        protected Void doInBackground(String... strings) {
-            URL url;
-            HttpURLConnection urlConnection = null;
-            try {
-                String myURL = baseUrl + "invitationresponse.php?invitationid=" + strings[0] +
-                        "&response=" + strings[1] + "&memberid=" + strings[2];
-                myURL = myURL.replaceAll(" ", "%20");
-                myURL = myURL.replaceAll("\\+", "%2B");
-                myURL = myURL.replaceAll("\'", "%27");
-                myURL = myURL.replaceAll("\'", "%22");
-                myURL = myURL.replaceAll("\\(", "%28");
-                myURL = myURL.replaceAll("\\)", "%29");
-                myURL = myURL.replaceAll("\\{", "%7B");
-                myURL = myURL.replaceAll("\\}", "%7B");
-                myURL = myURL.replaceAll("\\]", "%22");
-                myURL = myURL.replaceAll("\\[", "%22");
-                url = new URL(myURL);
-                urlConnection = (HttpURLConnection) url.openConnection();
-                BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-                String data;
-                while ((data = br.readLine()) != null)
-                    webPage = webPage + data;
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                if (urlConnection != null)
-                    urlConnection.disconnect();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            if (webPage.equals("success")) {
-                Toast.makeText(DashboardActivity.this, "Response Recorded Successfully", Toast.LENGTH_SHORT).show();
-                new FetchEvent().execute();
-            }
-            else
-                Toast.makeText(DashboardActivity.this, "Some Error Occurred", Toast.LENGTH_SHORT).show();
         }
     }
 }
