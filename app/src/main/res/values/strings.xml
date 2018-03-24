@@ -9,4 +9,11 @@
     <string name="title_activity_add_event">Add an Event</string>
     <string name="title_activity_events">Events</string>
     <string name="title_activity_add_new_event">Add New Event</string>
+    <string-array name="category_array">
+        <item>Category 1</item>
+        <item>Category 2</item>
+        <item>Category 3</item>
+        <item>Category 4</item>
+        <item>Category 5</item>
+    </string-array>
 </resources>

@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,13 +39,20 @@ public class ShoppingListActivity extends AppCompatActivity {
         eventid = intent.getStringExtra("eventid");
         category = intent.getStringExtra("category");
         Button addTask = findViewById(R.id.addtasks);
-        if (category.equals("admin"))
+        Button addmajor = findViewById(R.id.addmajor);
+        if (category.equals("admin")) {
             addTask.setVisibility(View.VISIBLE);
-        addTask.setOnClickListener(new View.OnClickListener() {
+            addmajor.setVisibility(View.VISIBLE);
+        }
+        addmajor.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 LayoutInflater inflater = LayoutInflater.from(ShoppingListActivity.this);
-                final View addTaskLayout = inflater.inflate(R.layout.layout_add_task, null);
+                final View addTaskLayout = inflater.inflate(R.layout.layout_add_item, null);
+                TextView categoryTV = addTaskLayout.findViewById(R.id.category);
+                final Spinner categoryText = addTaskLayout.findViewById(R.id.itemcategory);
+                categoryTV.setVisibility(View.GONE);
+                categoryText.setVisibility(View.GONE);
                 new AlertDialog.Builder(ShoppingListActivity.this)
                         .setTitle("Add Item")
                         .setIcon(android.R.drawable.ic_menu_agenda)
@@ -52,15 +60,42 @@ public class ShoppingListActivity extends AppCompatActivity {
                         .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                EditText nameText = addTaskLayout.findViewById(R.id.taskname);
-                                EditText descriptionText = addTaskLayout.findViewById(R.id.description);
+                                EditText nameText = addTaskLayout.findViewById(R.id.itemname);
                                 EditText costText = addTaskLayout.findViewById(R.id.cost);
                                 String name = nameText.getText().toString();
-                                String description = descriptionText.getText().toString();
+                                String category = categoryText.getSelectedItem().toString();
                                 String cost = costText.getText().toString();
-                                if (!name.isEmpty() && !description.isEmpty() && !cost.isEmpty())
+                                if (!name.isEmpty() && !category.isEmpty() && !cost.isEmpty()) {
+                                    new AddItem().execute(name, "major", cost);
+                                } else
+                                    Toast.makeText(ShoppingListActivity.this, "Details cannot be empty", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .setNegativeButton(android.R.string.cancel, null)
+                        .create().show();
+            }
+        });
+        addTask.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LayoutInflater inflater = LayoutInflater.from(ShoppingListActivity.this);
+                final View addTaskLayout = inflater.inflate(R.layout.layout_add_item, null);
+                new AlertDialog.Builder(ShoppingListActivity.this)
+                        .setTitle("Add Item")
+                        .setIcon(android.R.drawable.ic_menu_agenda)
+                        .setView(addTaskLayout)
+                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                Spinner categoryText = addTaskLayout.findViewById(R.id.itemcategory);
+                                EditText nameText = addTaskLayout.findViewById(R.id.itemname);
+                                EditText costText = addTaskLayout.findViewById(R.id.cost);
+                                String name = nameText.getText().toString();
+                                String category = categoryText.getSelectedItem().toString();
+                                String cost = costText.getText().toString();
+                                if (!name.isEmpty() && !category.isEmpty() && !cost.isEmpty())
                                 {
-                                    new AddItem().execute(name, description, cost);
+                                    new AddItem().execute(name, category, cost);
                                 }
                                 else
                                     Toast.makeText(ShoppingListActivity.this, "Details cannot be empty", Toast.LENGTH_SHORT).show();
@@ -282,7 +317,7 @@ public class ShoppingListActivity extends AppCompatActivity {
                     linearLayout.addView(nameTV);
                     TextView descriptionTV = new TextView(context);
                     descriptionTV.setLayoutParams(wrapParams);
-                    descriptionTV.setText("Quantity : " + quantity);
+                    descriptionTV.setText("Category : " + quantity);
                     linearLayout.addView(descriptionTV);
                     TextView costTV = new TextView(context);
                     costTV.setLayoutParams(wrapParams);

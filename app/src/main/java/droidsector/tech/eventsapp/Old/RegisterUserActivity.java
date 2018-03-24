@@ -35,7 +35,7 @@ public class RegisterUserActivity extends AppCompatActivity {
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                EditText nameEditText = findViewById(R.id.taskname);
+                EditText nameEditText = findViewById(R.id.itemcategory);
                 String name = nameEditText.getText().toString();
                 if (!name.isEmpty())
                 {

@@ -32,7 +32,7 @@ public class EventDetailsActivity extends AppCompatActivity {
         TextView about = findViewById(R.id.about);
         about.setText(description);
         TextView date = findViewById(R.id.date);
-        date.setText("Date : "+from.substring(0, from.indexOf(' ')));
+        date.setText("Date : " + from);
         TextView venue = findViewById(R.id.venue);
         venue.setText("Venue : "+location);
         Button eventTasks = findViewById(R.id.eventtask);
@@ -88,8 +88,7 @@ public class EventDetailsActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.share) {
-            //Todo: Get the name of the person and the number of people he/she is allowed to invite
-            //Todo: Also add it in the database
+            //Todo: Copy the stuff from the invitee activity
             Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
             sharingIntent.setType("text/plain");
             String shareBody = "http://eventsapp.co.in/eventsbuddy/index.php?id=" + eventId;

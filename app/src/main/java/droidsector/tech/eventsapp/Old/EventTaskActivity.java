@@ -61,7 +61,7 @@ public class EventTaskActivity extends AppCompatActivity {
                         .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                EditText nameText = addTaskLayout.findViewById(R.id.taskname);
+                                EditText nameText = addTaskLayout.findViewById(R.id.itemcategory);
                                 EditText descriptionText = addTaskLayout.findViewById(R.id.description);
                                 String name = nameText.getText().toString();
                                 String description = descriptionText.getText().toString();
