@@ -19,9 +19,17 @@ android:padding="24dp"
             android:orientation="vertical">
 
             <LinearLayout
-                android:id="@+id/data"
+                android:id="@+id/majordata"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/data"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:orientation="vertical" />
 
             <Button

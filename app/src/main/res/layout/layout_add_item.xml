@@ -29,13 +29,22 @@
         android:inputType="textCapSentences|textPersonName" />
 
     <EditText
+        android:id="@+id/quantity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:ems="10"
+        android:hint="Quantity"
+        android:inputType="number" />
+
+    <EditText
         android:id="@+id/cost"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_weight="1"
         android:ems="10"
-        android:hint="Cost"
+        android:hint="Cost per Unit"
         android:inputType="numberDecimal" />
 
 </LinearLayout>

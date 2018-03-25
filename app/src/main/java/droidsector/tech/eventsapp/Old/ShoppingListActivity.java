@@ -9,7 +9,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -28,7 +27,7 @@ import java.net.URL;
 import droidsector.tech.eventsapp.R;
 
 public class ShoppingListActivity extends AppCompatActivity {
-    String eventid = "", category = "";
+    String eventid = "", categoryUser = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,10 +36,10 @@ public class ShoppingListActivity extends AppCompatActivity {
         setTitle("Shopping List");
         Intent intent = getIntent();
         eventid = intent.getStringExtra("eventid");
-        category = intent.getStringExtra("category");
+        categoryUser = intent.getStringExtra("category");
         Button addTask = findViewById(R.id.addtasks);
         Button addmajor = findViewById(R.id.addmajor);
-        if (category.equals("admin")) {
+        if (categoryUser.equals("admin")) {
             addTask.setVisibility(View.VISIBLE);
             addmajor.setVisibility(View.VISIBLE);
         }
@@ -53,6 +52,10 @@ public class ShoppingListActivity extends AppCompatActivity {
                 final Spinner categoryText = addTaskLayout.findViewById(R.id.itemcategory);
                 categoryTV.setVisibility(View.GONE);
                 categoryText.setVisibility(View.GONE);
+                final EditText costText = addTaskLayout.findViewById(R.id.cost);
+                costText.setHint("Cost");
+                final EditText quantityText = addTaskLayout.findViewById(R.id.quantity);
+                quantityText.setVisibility(View.GONE);
                 new AlertDialog.Builder(ShoppingListActivity.this)
                         .setTitle("Add Item")
                         .setIcon(android.R.drawable.ic_menu_agenda)
@@ -61,12 +64,10 @@ public class ShoppingListActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 EditText nameText = addTaskLayout.findViewById(R.id.itemname);
-                                EditText costText = addTaskLayout.findViewById(R.id.cost);
                                 String name = nameText.getText().toString();
-                                String category = categoryText.getSelectedItem().toString();
                                 String cost = costText.getText().toString();
-                                if (!name.isEmpty() && !category.isEmpty() && !cost.isEmpty()) {
-                                    new AddItem().execute(name, "major", cost);
+                                if (!name.isEmpty() && !cost.isEmpty()) {
+                                    new AddItem().execute(name, "major", "1", cost);
                                 } else
                                     Toast.makeText(ShoppingListActivity.this, "Details cannot be empty", Toast.LENGTH_SHORT).show();
                             }
@@ -89,13 +90,15 @@ public class ShoppingListActivity extends AppCompatActivity {
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 Spinner categoryText = addTaskLayout.findViewById(R.id.itemcategory);
                                 EditText nameText = addTaskLayout.findViewById(R.id.itemname);
+                                EditText quantityText = addTaskLayout.findViewById(R.id.quantity);
                                 EditText costText = addTaskLayout.findViewById(R.id.cost);
                                 String name = nameText.getText().toString();
                                 String category = categoryText.getSelectedItem().toString();
+                                String quantity = quantityText.getText().toString();
                                 String cost = costText.getText().toString();
-                                if (!name.isEmpty() && !category.isEmpty() && !cost.isEmpty())
+                                if (!name.isEmpty() && !quantity.isEmpty() && !cost.isEmpty())
                                 {
-                                    new AddItem().execute(name, category, cost);
+                                    new AddItem().execute(name, category, quantity, cost);
                                 }
                                 else
                                     Toast.makeText(ShoppingListActivity.this, "Details cannot be empty", Toast.LENGTH_SHORT).show();
@@ -129,7 +132,7 @@ public class ShoppingListActivity extends AppCompatActivity {
             try
             {
                 String myURL = baseUrl+"additem.php?eventid="+eventid+"&itemname="+strings[0]
-                        +"&quantity="+strings[1]+"&cost="+strings[2];
+                        + "&category=" + strings[1] + "&quantity=" + strings[2] + "&cost=" + strings[3];
                 myURL = myURL.replaceAll(" ","%20");
                 myURL = myURL.replaceAll("\\+","%2B");
                 myURL = myURL.replaceAll("\'", "%27");
@@ -254,7 +257,6 @@ public class ShoppingListActivity extends AppCompatActivity {
                 myURL = myURL.replaceAll("\\}", "%7B");
                 myURL = myURL.replaceAll("\\]", "%22");
                 myURL = myURL.replaceAll("\\[", "%22");
-                Log.d("Abhinav", myURL);
                 url = new URL(myURL);
                 urlConnection = (HttpURLConnection) url.openConnection();
                 BufferedReader br=new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
@@ -280,6 +282,7 @@ public class ShoppingListActivity extends AppCompatActivity {
             if(!webPage.isEmpty())
             {
                 LinearLayout data = findViewById(R.id.data);
+                LinearLayout majorData = findViewById(R.id.majordata);
                 LinearLayout.LayoutParams wrapParams = new LinearLayout.LayoutParams
                         (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                 LinearLayout.LayoutParams matchParams = new LinearLayout.LayoutParams
@@ -294,6 +297,9 @@ public class ShoppingListActivity extends AppCompatActivity {
                     final String itemName = webPage.substring(0, brI);
                     webPage = webPage.substring(brI+4);
                     brI = webPage.indexOf("<br>");
+                    final String category = webPage.substring(0, brI);
+                    webPage = webPage.substring(brI + 4);
+                    brI = webPage.indexOf("<br>");
                     final String quantity = webPage.substring(0, brI);
                     webPage = webPage.substring(brI+4);
                     brI = webPage.indexOf("<br>");
@@ -302,63 +308,65 @@ public class ShoppingListActivity extends AppCompatActivity {
                     brI = webPage.indexOf("<br>");
                     final String bought = webPage.substring(0, brI);
                     webPage = webPage.substring(brI+4);
-                    LinearLayout outerLinearLayout = new LinearLayout(context);
-                    outerLinearLayout.setLayoutParams(matchParams);
-                    outerLinearLayout.setPadding(0,16,0,16);
-                    LinearLayout linearLayout = new LinearLayout(context);
-                    linearLayout.setOrientation(LinearLayout.VERTICAL);
-                    linearLayout.setPadding(32,16,32,16);
-                    linearLayout.setBackgroundColor(Color.WHITE);
-                    linearLayout.setLayoutParams(matchParams);
-                    TextView nameTV = new TextView(context);
-                    nameTV.setTextSize(22);
-                    nameTV.setLayoutParams(wrapParams);
-                    nameTV.setText(itemName);
-                    linearLayout.addView(nameTV);
-                    TextView descriptionTV = new TextView(context);
-                    descriptionTV.setLayoutParams(wrapParams);
-                    descriptionTV.setText("Category : " + quantity);
-                    linearLayout.addView(descriptionTV);
-                    TextView costTV = new TextView(context);
-                    costTV.setLayoutParams(wrapParams);
-                    costTV.setText("Cost : " + cost);
-                    linearLayout.addView(costTV);
-                    TextView completedTV = new TextView(context);
-                    completedTV.setLayoutParams(wrapParams);
-                    final int viewId = View.generateViewId();
-                    completedTV.setId(viewId);
-                    completedTV.setText("Status : " + (bought.equals("y")?"Bought":"Pending"));
-                    linearLayout.addView(completedTV);
-                    outerLinearLayout.addView(linearLayout);
-                    data.addView(outerLinearLayout);
-                    linearLayout.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            AlertDialog.Builder dialog = new AlertDialog.Builder(ShoppingListActivity.this);
-                            dialog
-                                    .setTitle("Confirm Completion")
-                                    .setMessage("Are you sure that the task has been completed?")
-                                    .setIcon(android.R.drawable.ic_menu_agenda)
-                                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                            new BoughtItem().execute(itemId, viewId+"");
-                                        }
-                                    });
-                            if (category.equals("admin")) {
+                    if (category.equals("major")) {
+                        LinearLayout outerLinearLayout = new LinearLayout(context);
+                        outerLinearLayout.setLayoutParams(matchParams);
+                        outerLinearLayout.setPadding(0, 16, 0, 16);
+                        LinearLayout linearLayout = new LinearLayout(context);
+                        linearLayout.setOrientation(LinearLayout.VERTICAL);
+                        linearLayout.setPadding(32, 16, 32, 16);
+                        linearLayout.setBackgroundColor(Color.WHITE);
+                        linearLayout.setLayoutParams(matchParams);
+                        TextView nameTV = new TextView(context);
+                        nameTV.setTextSize(22);
+                        nameTV.setLayoutParams(wrapParams);
+                        nameTV.setText(itemName);
+                        linearLayout.addView(nameTV);
+                        TextView categoryTV = new TextView(context);
+                        categoryTV.setLayoutParams(wrapParams);
+                        categoryTV.setText("Category : " + category);
+                        linearLayout.addView(categoryTV);
+                        TextView costTV = new TextView(context);
+                        costTV.setLayoutParams(wrapParams);
+                        costTV.setText("Cost : " + cost);
+                        linearLayout.addView(costTV);
+                        outerLinearLayout.addView(linearLayout);
+                        majorData.addView(outerLinearLayout);
+                        TextView completedTV = new TextView(context);
+                        completedTV.setLayoutParams(wrapParams);
+                        final int viewId = View.generateViewId();
+                        completedTV.setId(viewId);
+                        completedTV.setText("Status : " + (bought.equals("y") ? "Bought" : "Pending"));
+                        linearLayout.addView(completedTV);
+                        linearLayout.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                AlertDialog.Builder dialog = new AlertDialog.Builder(ShoppingListActivity.this);
                                 dialog
-                                        .setNeutralButton("Delete", new DialogInterface.OnClickListener() {
+                                        .setTitle("Confirm Completion")
+                                        .setMessage("Are you sure that the task has been completed?")
+                                        .setIcon(android.R.drawable.ic_menu_agenda)
+                                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialogInterface, int i) {
-                                                new RemoveItem().execute(itemId);
+                                                new BoughtItem().execute(itemId, viewId + "");
                                             }
                                         });
+                                if (categoryUser.equals("admin")) {
+                                    dialog
+                                            .setNeutralButton("Delete", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialogInterface, int i) {
+                                                    new RemoveItem().execute(itemId);
+                                                }
+                                            });
+                                }
+                                dialog
+                                        .setNegativeButton(android.R.string.no, null)
+                                        .create().show();
                             }
-                            dialog
-                                    .setNegativeButton(android.R.string.no, null)
-                                    .create().show();
-                        }
-                    });
+                        });
+                    }
                 }
             }
         }
