@@ -344,6 +344,9 @@ public class EventTaskActivity extends AppCompatActivity {
                     brI = webPage.indexOf("<br>");
                     final String completed = webPage.substring(0, brI);
                     webPage = webPage.substring(brI+4);
+                    brI = webPage.indexOf("<br>");
+                    final String assignedTo = webPage.substring(0, brI);
+                    webPage = webPage.substring(brI + 4);
                     LinearLayout outerLinearLayout = new LinearLayout(context);
                     outerLinearLayout.setLayoutParams(matchParams);
                     outerLinearLayout.setPadding(0,16,0,16);
@@ -361,6 +364,10 @@ public class EventTaskActivity extends AppCompatActivity {
                     descriptionTV.setLayoutParams(wrapParams);
                     descriptionTV.setText("Description : " + description);
                     linearLayout.addView(descriptionTV);
+                    TextView assignedToTV = new TextView(context);
+                    assignedToTV.setLayoutParams(wrapParams);
+                    assignedToTV.setText("Assigned To : " + assignedTo);
+                    linearLayout.addView(assignedToTV);
                     TextView completedTV = new TextView(context);
                     completedTV.setLayoutParams(wrapParams);
                     final int viewId = View.generateViewId();
