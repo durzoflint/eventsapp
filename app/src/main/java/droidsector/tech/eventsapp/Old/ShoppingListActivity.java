@@ -281,8 +281,14 @@ public class ShoppingListActivity extends AppCompatActivity {
             progressDialog.dismiss();
             if(!webPage.isEmpty())
             {
+                boolean sameCategory;
+                String previousCategory = "";
+                int previousCost = 0;
+                TextView previousName = null, previousCostTV = null;
                 LinearLayout data = findViewById(R.id.data);
                 LinearLayout majorData = findViewById(R.id.majordata);
+                majorData.removeAllViews();
+                data.removeAllViews();
                 LinearLayout.LayoutParams wrapParams = new LinearLayout.LayoutParams
                         (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                 LinearLayout.LayoutParams matchParams = new LinearLayout.LayoutParams
@@ -308,6 +314,8 @@ public class ShoppingListActivity extends AppCompatActivity {
                     brI = webPage.indexOf("<br>");
                     final String bought = webPage.substring(0, brI);
                     webPage = webPage.substring(brI+4);
+                    sameCategory = category.equals(previousCategory);
+                    previousCategory = category;
                     if (category.equals("major")) {
                         LinearLayout outerLinearLayout = new LinearLayout(context);
                         outerLinearLayout.setLayoutParams(matchParams);
@@ -330,14 +338,14 @@ public class ShoppingListActivity extends AppCompatActivity {
                         costTV.setLayoutParams(wrapParams);
                         costTV.setText("Cost : " + cost);
                         linearLayout.addView(costTV);
-                        outerLinearLayout.addView(linearLayout);
-                        majorData.addView(outerLinearLayout);
                         TextView completedTV = new TextView(context);
                         completedTV.setLayoutParams(wrapParams);
                         final int viewId = View.generateViewId();
                         completedTV.setId(viewId);
                         completedTV.setText("Status : " + (bought.equals("y") ? "Bought" : "Pending"));
                         linearLayout.addView(completedTV);
+                        outerLinearLayout.addView(linearLayout);
+                        majorData.addView(outerLinearLayout);
                         linearLayout.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -366,6 +374,49 @@ public class ShoppingListActivity extends AppCompatActivity {
                                         .create().show();
                             }
                         });
+                    } else {
+                        if (sameCategory) {
+                            previousName.setText(previousName.getText() + ", " + itemName);
+                            previousCost = previousCost + Integer.parseInt(cost) * Integer.parseInt(quantity);
+                            previousCostTV.setText("Cost : " + previousCost);
+                        } else {
+                            LinearLayout outerLinearLayout = new LinearLayout(context);
+                            outerLinearLayout.setLayoutParams(matchParams);
+                            outerLinearLayout.setPadding(0, 16, 0, 16);
+                            LinearLayout linearLayout = new LinearLayout(context);
+                            linearLayout.setOrientation(LinearLayout.VERTICAL);
+                            linearLayout.setPadding(32, 16, 32, 16);
+                            linearLayout.setBackgroundColor(Color.WHITE);
+                            linearLayout.setLayoutParams(matchParams);
+                            TextView categoryTV = new TextView(context);
+                            categoryTV.setLayoutParams(wrapParams);
+                            categoryTV.setTextSize(22);
+                            categoryTV.setText(category);
+                            linearLayout.addView(categoryTV);
+                            TextView nameTV = new TextView(context);
+                            nameTV.setLayoutParams(wrapParams);
+                            nameTV.setText("Items : " + itemName);
+                            linearLayout.addView(nameTV);
+                            int finalCost = Integer.parseInt(quantity) * Integer.parseInt(cost);
+                            TextView costTV = new TextView(context);
+                            costTV.setLayoutParams(wrapParams);
+                            costTV.setText("Cost : " + finalCost);
+                            linearLayout.addView(costTV);
+                            outerLinearLayout.addView(linearLayout);
+                            data.addView(outerLinearLayout);
+                            previousName = nameTV;
+                            previousCost = finalCost;
+                            previousCostTV = costTV;
+                            linearLayout.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    Intent intent = new Intent(ShoppingListActivity.this, ShoppingCategoryActivity.class);
+                                    intent.putExtra("eventid", eventid);
+                                    intent.putExtra("category", category);
+                                    startActivity(intent);
+                                }
+                            });
+                        }
                     }
                 }
             }

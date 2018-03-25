@@ -81,7 +81,8 @@
             android:resource="@color/colorAccent" />
 
         <activity android:name=".Old.PendingInvitationsActivity" />
-        <activity android:name=".Old.BudgetPlannerActivity"></activity>
+        <activity android:name=".Old.BudgetPlannerActivity" />
+        <activity android:name=".Old.ShoppingCategoryActivity"></activity>
     </application>
 
 </manifest>
