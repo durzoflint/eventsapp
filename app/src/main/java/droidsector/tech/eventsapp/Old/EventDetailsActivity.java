@@ -25,7 +25,7 @@ import java.net.URL;
 import droidsector.tech.eventsapp.R;
 
 public class EventDetailsActivity extends AppCompatActivity {
-    String eventId;
+    String eventId, eventname = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,14 +34,14 @@ public class EventDetailsActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String userId = intent.getStringExtra("userid");
         eventId = intent.getStringExtra("teamid");
-        final String name = intent.getStringExtra("name");
+        eventname = intent.getStringExtra("name");
         String description = intent.getStringExtra("description");
         String location = intent.getStringExtra("location");
         final String category = intent.getStringExtra("category");
         String from = intent.getStringExtra("from");
         String to = intent.getStringExtra("to");
         String teamMemberCount = intent.getStringExtra("teamMemberCount");
-        setTitle(name);
+        setTitle(eventname);
         TextView about = findViewById(R.id.about);
         about.setText(description);
         TextView date = findViewById(R.id.date);
@@ -54,7 +54,7 @@ public class EventDetailsActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent1 = new Intent(EventDetailsActivity.this, EventTaskActivity.class);
                 intent1.putExtra("category", category);
-                intent1.putExtra("eventname", name);
+                intent1.putExtra("eventname", eventname);
                 intent1.putExtra("eventid", eventId);
                 startActivity(intent1);
             }
@@ -85,6 +85,7 @@ public class EventDetailsActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent1 = new Intent(EventDetailsActivity.this, InviteeActivity.class);
                 intent1.putExtra("eventid", eventId);
+                intent1.putExtra("eventname", eventname);
                 startActivity(intent1);
             }
         });
@@ -133,7 +134,7 @@ public class EventDetailsActivity extends AppCompatActivity {
     }
 
     private class AddInvitee extends AsyncTask<String, Void, Void> {
-        String webPage = "";
+        String webPage = "", name = "";
         String baseUrl = "http://eventsapp.co.in/eventsbuddy/";
         ProgressDialog progressDialog;
 
@@ -145,10 +146,11 @@ public class EventDetailsActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(String... strings) {
+            name = strings[0];
             URL url;
             HttpURLConnection urlConnection = null;
             try {
-                String myURL = baseUrl + "addinvitee.php?eventid=" + eventId + "&name=" + strings[0] + "&plusallowed=" + strings[1];
+                String myURL = baseUrl + "addinvitee.php?eventid=" + eventId + "&name=" + name + "&plusallowed=" + strings[1];
                 myURL = myURL.replaceAll(" ", "%20");
                 myURL = myURL.replaceAll("\\+", "%2B");
                 myURL = myURL.replaceAll("\'", "%27");
@@ -187,7 +189,8 @@ public class EventDetailsActivity extends AppCompatActivity {
                 webPage = webPage.substring(brI + 4);
                 Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
                 sharingIntent.setType("text/plain");
-                String shareBody = "http://eventsapp.co.in/eventsbuddy/index.php?id=" + id;
+                String shareBody = "Hey " + name + ", you have been invited to " + eventname + ". Click on this link to RSVP.\n" +
+                        "http://eventsapp.co.in/eventsbuddy/index.php?id=" + id;
                 sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
                 startActivity(Intent.createChooser(sharingIntent, "Share via"));
             }

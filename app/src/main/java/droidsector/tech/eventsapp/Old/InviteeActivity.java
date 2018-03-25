@@ -27,7 +27,7 @@ import java.net.URL;
 import droidsector.tech.eventsapp.R;
 
 public class InviteeActivity extends AppCompatActivity {
-    String eventid;
+    String eventid, eventname = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +35,7 @@ public class InviteeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_invitee);
         Intent intent = getIntent();
         eventid = intent.getStringExtra("eventid");
+        eventname = intent.getStringExtra("eventname");
     }
 
     @Override
@@ -77,7 +78,7 @@ public class InviteeActivity extends AppCompatActivity {
     }
 
     private class AddInvitee extends AsyncTask<String, Void, Void> {
-        String webPage = "";
+        String webPage = "", name = "";
         String baseUrl = "http://eventsapp.co.in/eventsbuddy/";
         ProgressDialog progressDialog;
 
@@ -89,10 +90,11 @@ public class InviteeActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(String... strings) {
+            name = strings[0];
             URL url;
             HttpURLConnection urlConnection = null;
             try {
-                String myURL = baseUrl + "addinvitee.php?eventid=" + eventid + "&name=" + strings[0] + "&plusallowed=" + strings[1];
+                String myURL = baseUrl + "addinvitee.php?eventid=" + eventid + "&name=" + name + "&plusallowed=" + strings[1];
                 myURL = myURL.replaceAll(" ", "%20");
                 myURL = myURL.replaceAll("\\+", "%2B");
                 myURL = myURL.replaceAll("\'", "%27");
@@ -131,7 +133,8 @@ public class InviteeActivity extends AppCompatActivity {
                 webPage = webPage.substring(brI + 4);
                 Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
                 sharingIntent.setType("text/plain");
-                String shareBody = "http://eventsapp.co.in/eventsbuddy/index.php?id=" + id;
+                String shareBody = "Hey " + name + ", you have been invited to " + eventname + ". Click on this link to RSVP.\n" +
+                        "http://eventsapp.co.in/eventsbuddy/index.php?id=" + id;
                 sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
                 startActivity(Intent.createChooser(sharingIntent, "Share via"));
             }
