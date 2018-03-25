@@ -24,6 +24,8 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -318,6 +320,8 @@ public class TeamMembersActivity extends AppCompatActivity {
             if(webPage.equals("success"))
             {
                 Toast.makeText(TeamMembersActivity.this, "Member Added Successfully", Toast.LENGTH_SHORT).show();
+                String number = FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber();
+                new SendNotif().execute(number, "Team Member Invitation", "You have been added to a team");
                 onResume();
             }
             else
@@ -388,6 +392,42 @@ public class TeamMembersActivity extends AppCompatActivity {
             } else {
                 Toast.makeText(this, "Until you grant the permission, we cannot display the names", Toast.LENGTH_SHORT).show();
             }
+        }
+    }
+
+    private class SendNotif extends AsyncTask<String, Void, Void> {
+        String webPage = "";
+        String baseUrl = "http://eventsapp.co.in/eventsbuddy/";
+
+        @Override
+        protected Void doInBackground(String... strings) {
+            URL url;
+            HttpURLConnection urlConnection = null;
+            try {
+                String myURL = baseUrl + "notificationbynumber.php?number=" + strings[0] + "&body=" + strings[2] + "&title=" + strings[1];
+                myURL = myURL.replaceAll(" ", "%20");
+                myURL = myURL.replaceAll("\\+", "%2B");
+                myURL = myURL.replaceAll("\'", "%27");
+                myURL = myURL.replaceAll("\'", "%22");
+                myURL = myURL.replaceAll("\\(", "%28");
+                myURL = myURL.replaceAll("\\)", "%29");
+                myURL = myURL.replaceAll("\\{", "%7B");
+                myURL = myURL.replaceAll("\\}", "%7B");
+                myURL = myURL.replaceAll("\\]", "%22");
+                myURL = myURL.replaceAll("\\[", "%22");
+                url = new URL(myURL);
+                urlConnection = (HttpURLConnection) url.openConnection();
+                BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                String data;
+                while ((data = br.readLine()) != null)
+                    webPage = webPage + data;
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (urlConnection != null)
+                    urlConnection.disconnect();
+            }
+            return null;
         }
     }
 }
