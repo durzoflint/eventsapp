@@ -106,6 +106,9 @@ public class PendingInvitationsActivity extends AppCompatActivity {
                     brI = webPage.indexOf("<br>");
                     final String teamMemberCount = webPage.substring(0, brI);
                     webPage = webPage.substring(brI + 4);
+                    brI = webPage.indexOf("<br>");
+                    final String adminName = webPage.substring(0, brI);
+                    webPage = webPage.substring(brI + 4);
                     LinearLayout data = findViewById(R.id.data);
                     LinearLayout.LayoutParams wrapParams = new LinearLayout.LayoutParams
                             (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -124,6 +127,10 @@ public class PendingInvitationsActivity extends AppCompatActivity {
                     nameTV.setLayoutParams(wrapParams);
                     nameTV.setText(name);
                     linearLayout.addView(nameTV);
+                    TextView adminnameTV = new TextView(context);
+                    adminnameTV.setLayoutParams(wrapParams);
+                    adminnameTV.setText("Admin : " + adminName);
+                    linearLayout.addView(adminnameTV);
                     TextView descriptionTV = new TextView(context);
                     descriptionTV.setLayoutParams(wrapParams);
                     descriptionTV.setText("Description : " + description);
