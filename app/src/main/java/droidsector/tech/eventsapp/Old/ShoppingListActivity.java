@@ -413,6 +413,7 @@ public class ShoppingListActivity extends AppCompatActivity {
                                     Intent intent = new Intent(ShoppingListActivity.this, ShoppingCategoryActivity.class);
                                     intent.putExtra("eventid", eventid);
                                     intent.putExtra("category", category);
+                                    intent.putExtra("categoryuser", categoryUser);
                                     startActivity(intent);
                                 }
                             });
