@@ -24,8 +24,6 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.auth.FirebaseAuth;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -320,7 +318,6 @@ public class TeamMembersActivity extends AppCompatActivity {
             if(webPage.equals("success"))
             {
                 Toast.makeText(TeamMembersActivity.this, "Member Added Successfully", Toast.LENGTH_SHORT).show();
-                String number = FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber();
                 new SendNotif().execute(number, "Team Member Invitation", "You have been added to a team");
                 onResume();
             }
